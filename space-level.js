@@ -15,18 +15,6 @@ let offsetY = 50; // offset top of the canvas
 
 function setup() {
   createCanvas(800, 800); // change back to 600.
-
-  comet = new cometBall(200, 200, 20);
-  saucer = new spacePaddle(width / 2);
-
-  // brick grid
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
-      let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-      bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 20));
-    }
-  }
 }
 
 // Ball class
@@ -144,9 +132,7 @@ class spaceBrick {
       comet.x - comet.r < this.x + this.w &&
       comet.y + comet.r > this.y &&
       comet.y - comet.r < this.y + this.h
-    ) {
-      comet.moveY = comet.moveY * -1;
-    }
+    );
   }
 }
 
@@ -182,14 +168,25 @@ function spaceScenery() {
   ellipse(255, 30, 10);
 }
 
+comet = new cometBall(200, 200, 20);
+saucer = new spacePaddle(width / 2);
+
 function draw() {
   spaceScenery();
 
+  // brick grid
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
+      let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
+      bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 20));
+    }
+  }
   for (let brick of bricks) {
     brick.drawAsteroid();
   }
 
-  // comet.drawComet();
+  comet.drawComet();
   comet.moveComet();
   comet.checkCometBoundaries();
 
