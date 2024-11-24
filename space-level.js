@@ -10,8 +10,24 @@ let brickWidth = 100;
 let brickHeight = 50;
 let spaceX = 10; // space between bricks x
 let spaceY = 10; // space between bricks y
-let offsetX = 75; // offset top left corner of canvas
-let offsetY = 50; // offset top of the canvas
+let offsetX = 75; // offset x direction
+let offsetY = 50; // offset y direction
+
+//Stars
+// code modified from Garritt's video example
+let starX = [];
+let starY = [];
+let starAlpha = [];
+
+for (let i = 0; i < 300; i++) {
+  const x = Math.floor(Math.random() * width);
+  const y = Math.floor(Math.random() * height);
+  const alpha = Math.random();
+
+  starX.push(x);
+  starY.push(y);
+  starAlpha.push(alpha);
+}
 
 function setup() {
   createCanvas(800, 800); // change back to 600.
@@ -24,7 +40,7 @@ class cometBall {
     this.y = y;
     this.r = r;
     this.moveX = 2;
-    this.moveY = -4;
+    this.moveY = -6;
   }
 
   // draw the comet
@@ -32,7 +48,7 @@ class cometBall {
     stroke(2, 151, 214);
     strokeWeight(4);
     fill(204, 234, 252);
-    ellipse(this.x, this.y, this.r * 2);
+    circle(this.x, this.y, this.r * 2);
   }
 
   // comet movements
@@ -41,7 +57,7 @@ class cometBall {
     this.y = this.y + this.moveY;
   }
 
-  // ball moves within canvas
+  // check canvas boundaries
   checkCometBoundaries() {
     // left or right boundary
     if (this.x - this.r <= 0 || this.x + this.r >= width) {
@@ -103,7 +119,7 @@ class spaceBrick {
     this.y = y;
     this.w = w;
     this.h = h;
-    this.r = r;
+    this.r = r; // gives rounded edges
   }
 
   drawAsteroid() {
@@ -127,7 +143,7 @@ class spaceBrick {
   }
   // remove brick when colliding with ball
   collision(comet) {
-    if (
+    return (
       comet.x + comet.r > this.x &&
       comet.x - comet.r < this.x + this.w &&
       comet.y + comet.r > this.y &&
@@ -136,10 +152,17 @@ class spaceBrick {
   }
 }
 
+// brick grid
+for (let r = 0; r < rows; r++) {
+  for (let c = 0; c < cols; c++) {
+    let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
+    let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
+    bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 20));
+  }
+}
+
 // Space Scenery
 function spaceScenery() {
-  background(15, 15, 15);
-
   //planets
   noStroke();
   fill(227, 85, 57);
@@ -172,22 +195,33 @@ comet = new cometBall(200, 200, 20);
 saucer = new spacePaddle(width / 2);
 
 function draw() {
+  background(15, 15, 15);
+
+  // code from Garritt's video example
+  for (let index in starX) {
+    noStroke();
+    fill(255, 255, 255, Math.abs(Math.sin(starAlpha[index])) * 255);
+    ellipse(starX[index], starY[index], 2);
+    starAlpha[index] = starAlpha[index] + 0.02;
+  }
+
   spaceScenery();
 
-  // brick grid
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
-      let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-      bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 20));
+  // brick collision
+  for (let i = bricks.length - 1; i >= 0; i--) {
+    let brick = bricks[i];
+
+    if (brick.collision(comet)) {
+      bricks.splice(i, 1);
+      comet.moveY = comet.moveY * -1;
+    } else {
+      brick.drawAsteroid();
     }
-  }
-  for (let brick of bricks) {
-    brick.drawAsteroid();
   }
 
   comet.drawComet();
   comet.moveComet();
+
   comet.checkCometBoundaries();
 
   saucer.drawSpacePaddle();
