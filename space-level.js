@@ -2,6 +2,11 @@
 let comet;
 let saucer;
 
+// Game Variables
+let score = 0; // Player's score
+let lives = 3; // Player's lives
+let gameActive = true; // Flag to check if the game is active
+
 // Brick Variables
 let bricks = [];
 let rows = 4;
@@ -30,7 +35,7 @@ for (let i = 0; i < 300; i++) {
 }
 
 function setup() {
-  createCanvas(800, 800); // change back to 600.
+  createCanvas(800, 600);
 }
 
 // Ball class
@@ -189,6 +194,21 @@ function spaceScenery() {
   fill(117, 84, 45);
   ellipse(245, 20, 5);
   ellipse(255, 30, 10);
+
+  // flying saucers
+  push();
+  rotate(-0.2);
+  fill(152, 154, 156);
+  ellipse(500, 425, 50, 20);
+  fill(186, 216, 247);
+  arc(500, 425, 30, 30, PI, 0, CHORD);
+  fill(40, 44, 48);
+  circle(500, 430, 3);
+  circle(510, 429, 3);
+  circle(490, 429, 3);
+  circle(520, 425, 3);
+  circle(480, 425, 3);
+  pop();
 }
 
 comet = new cometBall(200, 200, 20);
@@ -207,15 +227,16 @@ function draw() {
 
   spaceScenery();
 
-  // brick collision
-  for (let i = bricks.length - 1; i >= 0; i--) {
-    let brick = bricks[i];
+  // draw brick grid
+  for (let brick of bricks) {
+    brick.drawAsteroid();
+  }
 
-    if (brick.collision(comet)) {
+  // for loop explained (backwards iteration) by chatgpt https://chatgpt.com/share/674472ad-afd0-8007-99ef-06fabfa4b8a9
+  for (let i = bricks.length - 1; i >= 0; i--) {
+    if (bricks[i].collision(comet)) {
       bricks.splice(i, 1);
-      comet.moveY = comet.moveY * -1;
-    } else {
-      brick.drawAsteroid();
+      comet.moveY = comet.moveY * -1; // ball bounces back off of brick
     }
   }
 
@@ -226,4 +247,12 @@ function draw() {
 
   saucer.drawSpacePaddle();
   saucer.hitSpacePaddle(comet);
+
+  // Display score and lives
+  textSize(24);
+  textFont("Courier New");
+  fill(255);
+  textAlign(LEFT, TOP);
+  text("Score: " + score, 10, 10);
+  text("Lives: " + lives, 10, 40);
 }
