@@ -1,6 +1,15 @@
 // Character Variables
 let pearl;
 let shell;
+let c1 = color(129, 210, 227);
+let c2 = color(71, 116, 125);
+
+// Fish Variables
+let fishX = [160, 180, 200];
+let fishY = [400, 435, 465];
+let fishSpeed = [-1.5, -1.3, -1.5];
+let fishWidth = [70, 70, 50];
+let fishHeight = [15, 15, 10];
 
 // Game Variables
 let score = 0; // Player's score
@@ -19,7 +28,7 @@ let offsetX = 75; // offset x direction
 let offsetY = 50; // offset y direction
 
 function setup() {
-  createCanvas(800, 800); //change back to 600
+  createCanvas(800, 600); //change back to 600
 }
 
 // Ball class
@@ -132,7 +141,35 @@ for (let r = 0; r < rows; r++) {
 
 // Underwater Scenery
 function oceanScenery() {
-  background(123, 208, 224);
+  // gradient adapted from https://editor.p5js.org/J_Silva/sketches/mJslozHWg
+  for (let y = 0; y < height; y++) {
+    n = map(y, 0, height, 0, 1);
+    let newc = lerpColor(c1, c2, n);
+    stroke(newc);
+    line(0, y, width, y);
+  }
+
+  // fish loop
+  for (let i = 0; i < fishX.length; i++) {
+    fishX[i] = fishX[i] + fishSpeed[i];
+
+    if (fishX[i] < -100) {
+      fishX[i] = width + 50;
+    }
+
+    // draw fish
+    noStroke();
+    fill(54, 86, 92);
+    ellipse(fishX[i] + 5, fishY[i], fishWidth[i], fishHeight[i]);
+    triangle(
+      fishX[i] + fishWidth[i] / 2,
+      fishY[i],
+      fishX[i] + fishWidth[i] / 2 + 15,
+      fishY[i] + fishHeight[i],
+      fishX[i] + fishWidth[i] / 2 + 15,
+      fishY[i] - fishHeight[i]
+    );
+  }
 
   //sand
   noStroke();
@@ -149,7 +186,7 @@ function oceanScenery() {
   endShape();
 
   //bubbles
-  stroke(55, 124, 138);
+  stroke(68, 140, 156);
   strokeWeight(2);
   fill(181, 234, 245);
   circle(80, 353, 20);
@@ -157,7 +194,7 @@ function oceanScenery() {
   circle(98, 345, 10);
   circle(570, 500, 20);
   circle(590, 495, 10);
-  circle(580, 480, 15);
+  circle(580, 482, 15);
   circle(630, 25, 20);
   circle(650, 20, 15);
   circle(646, 37, 10);
@@ -191,6 +228,12 @@ function oceanScenery() {
   circle(585, 560, 20);
   circle(570, 560, 20);
   circle(590, 575, 20);
+
+  //corals
+  fill(209, 61, 115);
+  arc(230, 565, 40, 30, PI, 0, CHORD);
+  fill(235, 87, 141);
+  arc(620, 565, 30, 30, PI, 0, CHORD);
 }
 
 pearl = new pearlBall(200, 200, 20);
