@@ -1,3 +1,15 @@
+// Fish Variables
+let fishX = [160, 180, 200];
+let fishY = [400, 435, 465];
+let fishSpeed = [-1.5, -1.3, -1.5];
+let fishWidth = [70, 70, 50];
+let fishHeight = [15, 15, 10];
+
+
+
+
+
+
 function setup() {
     createCanvas(800, 600);
   }
@@ -9,6 +21,7 @@ function setup() {
   fill(301, 136, 60);
   ellipse(670, 425, 200);
   pop();
+   
 
   //planets
 push();
@@ -125,6 +138,88 @@ noStroke();
     ellipse(400, 400, 5);
     ellipse(500, 600, 10);
 
+    push();
+    fill(123, 208, 224);
+    noStroke();
+    rect(0, 0, 267, 600);
+
+    //sand
+  noStroke();
+  fill(209, 163, 88);
+  beginShape();
+  vertex(0, 600);
+  bezierVertex(0, 580, 135,490, 260, 600);
+  endShape();
+
+  fill(245, 197, 120);
+  beginShape();
+  vertex(360, 600);
+  bezierVertex(200, 525, 95, 675, 50, 600);
+  endShape();
+
+  //bubbles
+  stroke(55, 124, 138);
+  strokeWeight(2);
+  fill(181, 234, 245);
+  circle(80, 353, 20);
+  circle(10, 365, 15);
+  circle(8, 345, 10);
+  circle(70, 500, 20);
+  circle(90, 495, 10);
+  circle(80, 480, 15);
+  circle(30, 25, 20);
+  circle(50, 20, 15);
+  circle(46, 37, 10);
+
+  circle(160, 180, 45);
+  circle(30, 105, 60);
+  circle(140, 210, 15);
+
+
+  //sea moss
+  noStroke();
+  fill(34, 139, 34);
+
+  //left side
+  circle(0, 465, 50);
+  circle(10, 495, 50);
+  circle(10, 525, 50);
+  circle(0, 555, 50);
+  circle(0, 580, 40);
+
+  //right side
+  circle(230, 465, 50);
+  circle(230, 495, 50);
+  circle(220, 525, 50);
+  circle(230, 555, 50);
+  circle(230, 580, 40);
+
+   // fish loop
+   for (let i = 0; i < fishX.length; i++) {
+    fishX[i] = fishX[i] + fishSpeed[i];
+
+    if (fishX[i] < -100) {
+      fishX[i] = 215;
+    }
+
+    // draw fish
+    noStroke();
+    fill(54, 86, 92);
+    ellipse(fishX[i] + 5, fishY[i], fishWidth[i], fishHeight[i]);
+    triangle(
+      fishX[i] + fishWidth[i] / 2,
+      fishY[i],
+      fishX[i] + fishWidth[i] / 2 + 15,
+      fishY[i] + fishHeight[i],
+      fishX[i] + fishWidth[i] / 2 + 15,
+      fishY[i] - fishHeight[i]
+    );
+  }
+
+  
+pop();
+    
+
 pop();
 
   
@@ -134,12 +229,17 @@ pop();
 
 
 pop();
+push();
+ textSize(40);
+ textFont("Bungee Tint Regular");
+  text("BREAKOUT GAME", width / 2 -150, height / 2 - 80);
+  stroke(20);
+  pop();
 
-  rect( width / 2 - 100, height / 2 - 90, 250, 60);
-  text("BREAKOUT GAME", width / 2 - 80, height / 2 - 50);
-  textSize(16);
-  rect( width / 2 - 50, height / 2 + 10, 150, 40);
-  text("Press Key to Start", width / 2 - 40, height / 1.8);
+  textSize(20);
+  textFont("Audiowide Regular");
+  fill(255, 255, 255);
+  text("Press Key to Start", width / 2 - 80, height / 1.8);
 
   }
   function draw(){
