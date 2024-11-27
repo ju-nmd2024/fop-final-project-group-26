@@ -23,7 +23,7 @@ function setup() {
   pop();
    
 
-  //planets
+  //bamboo
 push();
   stroke(73, 161, 6);
   strokeWeight(18);
@@ -232,14 +232,16 @@ pop();
 push();
  textSize(40);
  textFont("Bungee Tint Regular");
-  text("BREAKOUT GAME", width / 2 -150, height / 2 - 80);
+  text("BREAKOUT GAME", width / 2 -190, height / 2 - 80);
   stroke(20);
   pop();
 
   textSize(20);
   textFont("Audiowide Regular");
   fill(255, 255, 255);
-  text("Press Key to Start", width / 2 - 80, height / 1.8);
+  text("Press Key to Start", width / 2 - 120, height / 1.8);
+  textSize(15);
+  text("Read The Instructions", width / 2 -106, height / 1.6);
 
   }
   function draw(){
