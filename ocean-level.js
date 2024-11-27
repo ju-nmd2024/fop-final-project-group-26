@@ -73,7 +73,7 @@ class pearlBall {
 class shellPaddle {
   constructor(x) {
     this.x = x;
-    this.y = height - 40;
+    this.y = height - 170; //change back to 40
     this.w = 120;
     this.h = 20;
   }
@@ -84,7 +84,8 @@ class shellPaddle {
 
     // clam shell
     stroke(137, 94, 166);
-    strokeWeight(2);
+    strokeWeight(2.5);
+    strokeJoin(ROUND);
     fill(218, 200, 230);
     arc(this.x, this.y, this.w, this.h * 2, 0, PI, CHORD);
     arc(this.x - 75, this.y, this.w / 4, this.h - 10, 0, PI, CHORD);
