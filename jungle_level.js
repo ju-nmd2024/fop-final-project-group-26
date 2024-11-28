@@ -31,7 +31,7 @@ class jungleBall {
     this.moveY = -4;
   }
 
-  // draw the comet
+  // draw the coconut
   drawCoconut() {
     stroke(74, 47, 48);
     strokeWeight(5);
@@ -42,25 +42,40 @@ class jungleBall {
     ellipse(this.x, this.y, this.r * 1.5);
   }
 
-  // comet movements
+  // coconut movements
   moveCoconut() {
     this.x = this.x + this.moveX;
     this.y = this.y + this.moveY;
   }
 
-  // ball moves within canvas
   checkCoconutBoundaries() {
-    // left or right boundary
+    // Left or right boundary
     if (this.x - this.r <= 0 || this.x + this.r >= width) {
-      this.moveX = this.moveX * -1;
+      this.moveX *= -1;
     }
 
-    // top or bottom boundary
-    if (this.y - this.r <= 0 || this.y + this.r >= height) {
-      this.moveY = this.moveY * -1;
+    // Top boundary
+    if (this.y - this.r <= 0) {
+      this.moveY *= -1;
+    }
+
+    // Bottom boundary: Lose life
+    if (this.y - this.r > height) {
+      lives--;
+      if (lives > 0) {
+        // Reset coconut position
+        this.x = width / 2;
+        this.y = height - 100;
+        this.moveX = 2;
+        this.moveY = -4;
+      } else {
+        gameActive = false; // End game
+        noLoop();
+      }
     }
   }
 }
+
 
 // Paddle class
 class junglePaddle {
@@ -292,6 +307,10 @@ function draw() {
       // Reverse coconut direction
       coconut.moveY *= -1;
 
+      // Increase score
+      score += bricks[i].isSpecial ? 10 : 5;
+
+
       // Remove the brick from the array
       bricks.splice(i, 1);
     }
@@ -310,27 +329,15 @@ function draw() {
     }
   }
 
+  
+
   // Display score and lives
   textSize(24);
-  textFont("Courier New");
-  fill(255);
+  textFont("Audiowide Regular");
+  fill(255, 227, 234);
   textAlign(LEFT, TOP);
   text("Score: " + score, 10, 10);
   text("Lives: " + lives, 10, 40);
-
-  //    // Ball falls off screen
-  //    if (600 > height + 15) {
-  //     lives -= 1;
-  //     if (lives > 0) {
-  //       x = 400;
-  //       y = 300;
-  //       xVelocity = 3;
-  //       yVelocity = 3;
-  //     } else {
-  //       gameActive = false;
-  //       noLoop();
-  //     }
-  //   }
 
   // coconut.drawCoconut();
   coconut.drawCoconut();
