@@ -1,59 +1,63 @@
+let c1 = color(29, 32, 41);
+let c2 = color(195, 255, 112);
 
+//Stars
+// code modified from Garritt's video example
+let starX = [];
+let starY = [];
+let starAlpha = [];
 
+for (let i = 0; i < 300; i++) {
+  const x = Math.floor(Math.random() * width);
+  const y = Math.floor(Math.random() * height);
+  const alpha = Math.random();
 
+  starX.push(x);
+  starY.push(y);
+  starAlpha.push(alpha);
+}
 
-
-let c1 = color(255, 255, 255);
-let c2 = color(0, 0, 0);
-
+//Setup
 function setup() {
     createCanvas(800, 600);
-    
-    
-  
   }
+
+  //Start Screen
   function startScreen(){
+    
       // gradient adapted from https://editor.p5js.org/J_Silva/sketches/mJslozHWg
-      for (let y = 0; y < height; y++) {
-        n = map(y, 0, height, 0, 1);
+      for (let y = 1; y < height; y++) {
+        n = map(y, 0, height, 0, 0.4);
         let newc = lerpColor(c1, c2, n);
         stroke(newc);
         line(0, y, width, y);
-    background(14, 161, 117);
       }
- 
-   fill(228, 233, 235); //stars should move
-   noStroke();
-   ellipse(100, 500, 30);
-   ellipse(630, 510, 20);
-   ellipse(700, 300, 15);
-   ellipse(400, 200, 35);
-   ellipse(178, 100, 25);
-   ellipse(528, 20, 10);
-   ellipse(400, 400, 10);
-   ellipse(500, 600, 10);
-
-
-
+//text
 push();
  textSize(40);
- textFont("Bungee Tint Regular");
-  text("BREAKOUT GAME", width / 2 -190, height / 2 - 80);
+ fill(66, 148, 52);
+ textFont("Lilita One");
+  text("YOU WIN! CONGRADULATIONS", width / 2 -255, height / 2 - 80);
   stroke(20);
   pop();
 
   textSize(20);
   textFont("Audiowide Regular");
   fill(255, 255, 255);
-  text("Press Key to Start", width / 2 - 120, height / 1.8);
+  text("Press Key to Restart", width / 2 - 118, height / 1.8);
   textSize(15);
-  text("Read The Instructions", width / 2 -106, height / 1.6);
-
   }
+
+  //Draw
   function draw(){
     startScreen();
 
-
-      
-  }
+ // code from Garritt's video example
+ for (let index in starX) {
+  noStroke();
+  fill(255, 255, 255, Math.abs(Math.sin(starAlpha[index])) * 255);
+  ellipse(starX[index], starY[index], 3);
+  starAlpha[index] = starAlpha[index] + 0.05;
+}
+ }
   
