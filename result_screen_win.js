@@ -23,7 +23,7 @@ function setup() {
   }
 
   //Start Screen
-  function startScreen(){
+  function resultScreen(){
     
       // gradient adapted from https://editor.p5js.org/J_Silva/sketches/mJslozHWg
       for (let y = 1; y < height; y++) {
@@ -50,7 +50,7 @@ push();
 
   //Draw
   function draw(){
-    startScreen();
+    resultScreen();
 
  // code from Garritt's video example
  for (let index in starX) {
