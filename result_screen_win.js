@@ -37,7 +37,7 @@ push();
  textSize(40);
  fill(66, 148, 52);
  textFont("Lilita One");
-  text("YOU WIN! CONGRADULATIONS", width / 2 -255, height / 2 - 80);
+  text("YOU WIN! CONGRATULATIONS!", width / 2 -255, height / 2 - 80);
   stroke(20);
   pop();
 

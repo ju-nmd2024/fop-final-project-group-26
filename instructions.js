@@ -50,7 +50,8 @@ function draw() {
   text("If the ball falls past your paddle, you lose a life.", 70, 440);
   text("The game ends when all lives are lost.", 70, 470);
 
-  text("Catch the boost with your paddle to activate it.", 70, 540);
+  text("Hold down the B key to increase ball speed.", 70, 540);
+  text("Hit lighter bricks to increase paddle size.", 70, 570);
 
   //home button
 

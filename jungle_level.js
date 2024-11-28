@@ -1,9 +1,10 @@
 // Character Variables
 let coconut;
-let saucer;
+let bamboo;
 let score = 0; // Player's score
 let lives = 3; // Player's lives
-let gameActive = true; // Flag to check if the game is active
+let gameActive = true; // check if the game is active
+let isBoosting = false; // check if boost is active or not
 
 // Brick Variables
 let bricks = [];
@@ -18,18 +19,6 @@ let offsetY = 50; // offset top of the canvas
 
 function setup() {
   createCanvas(800, 600); // change back to 600.
-
-  coconut = new jungleBall(200, 200, 20);
-  saucer = new junglePaddle(width / 2);
-
-  // brick grid
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
-      let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-      bricks.push(new jungleBrick(x, y, brickWidth, brickHeight, 10));
-    }
-  }
 }
 
 // Ball class
@@ -80,13 +69,15 @@ class junglePaddle {
     this.y = height - 70;
     this.w = 120;
     this.h = 20;
+    this.originalW = this.w; //store original width
+    this.timer = 0; //timer to track size duration
   }
 
   drawJunglePaddle() {
     this.x = mouseX;
     // noStroke();
 
-    // flying saucer
+    // paddle
     fill(230, 216, 62);
     stroke(230, 156, 30);
     strokeWeight(2);
@@ -94,6 +85,19 @@ class junglePaddle {
     ellipse(this.x, this.y + 5, this.w * 1.5, this.h * 0.3);
     ellipse(this.x, this.y + 10, this.w * 1.5, this.h * 0.3);
     ellipse(this.x, this.y + 15, this.w * 1.5, this.h * 0.3);
+
+    //reset size when timer runs out, from chatgpt https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+    if (this.timer > 0) {
+      this.timer--;
+    } else {
+      this.w = this.originalW;
+    }
+  }
+
+  // increaseSize function from https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+  increaseSize(duration) {
+    this.w = this.originalW * 1.5; // increase size
+    this.timer = duration; // set timer
   }
 
   hitJunglePaddle(coconut) {
@@ -107,17 +111,23 @@ class junglePaddle {
   }
 }
 class jungleBrick {
-  constructor(x, y, w, h, r) {
+  constructor(x, y, w, h, r, isSpecial = false) {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
     this.r = r;
+    this.isSpecial = isSpecial; //activate special bricks
   }
 
   drawStones() {
     noStroke();
-    fill(108, 110, 94);
+
+    if (this.isSpecial) {
+      fill(171, 173, 158); //change colour for special bricks
+    } else {
+      fill(108, 110, 94);
+    }
     rect(this.x, this.y, this.w, this.h, this.r);
     fill(133, 135, 116);
     rect(this.x + this.h / 4, this.y + this.r, this.w / 3, this.h / 4);
@@ -139,6 +149,16 @@ class jungleBrick {
     ) {
       coconut.moveY = coconut.moveY * -1;
     }
+  }
+}
+
+// brick grid
+for (let r = 0; r < rows; r++) {
+  for (let c = 0; c < cols; c++) {
+    let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
+    let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
+    let isSpecial = Math.random() < 0.1; // 10% chance of being special
+    bricks.push(new jungleBrick(x, y, brickWidth, brickHeight, 10, isSpecial));
   }
 }
 
@@ -248,6 +268,9 @@ function jungleScenery() {
   //   pop();
 }
 
+coconut = new jungleBall(400, 500, 20);
+bamboo = new junglePaddle(width / 2);
+
 function draw() {
   jungleScenery();
 
@@ -263,11 +286,27 @@ function draw() {
       coconut.y + coconut.r > bricks[i].y &&
       coconut.y - coconut.r < bricks[i].y + bricks[i].h
     ) {
+      if (bricks[i].isSpecial) {
+        bamboo.increaseSize(300); //temporary paddle size increase
+      }
       // Reverse coconut direction
       coconut.moveY *= -1;
 
       // Remove the brick from the array
       bricks.splice(i, 1);
+    }
+  }
+
+  // Press B to activate speed Boost
+  if (keyIsDown(66)) {
+    if (!isBoosting) {
+      comet.moveX = comet.moveX * 1.8; // increase speed
+      comet.moveY = comet.moveY * 1.8;
+      isBoosting = true;
+    } else if (isBoosting) {
+      comet.moveX = comet.moveX / 1.8; // reset speed back to normal
+      comet.moveY = comet.moveY / 1.8;
+      isBoosting = false;
     }
   }
 
@@ -298,6 +337,6 @@ function draw() {
   coconut.moveCoconut();
   coconut.checkCoconutBoundaries();
 
-  saucer.drawJunglePaddle();
-  saucer.hitJunglePaddle(coconut);
+  bamboo.drawJunglePaddle();
+  bamboo.hitJunglePaddle(coconut);
 }

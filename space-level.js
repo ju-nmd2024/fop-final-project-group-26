@@ -5,7 +5,8 @@ let saucer;
 // Game Variables
 let score = 0; // Player's score
 let lives = 3; // Player's lives
-let gameActive = true; // Flag to check if the game is active
+let gameActive = true; // check if the game is active
+let isBoosting = false; // check if boost is active or not
 
 // Brick Variables
 let bricks = [];
@@ -35,7 +36,7 @@ for (let i = 0; i < 300; i++) {
 }
 
 function setup() {
-  createCanvas(800, 600);
+  createCanvas(800, 800);
 }
 
 // Ball class
@@ -83,6 +84,8 @@ class spacePaddle {
     this.y = height - 40;
     this.w = 120;
     this.h = 20;
+    this.originalW = this.w; //store original width
+    this.timer = 0; //timer to track size duration
   }
 
   drawSpacePaddle() {
@@ -106,6 +109,19 @@ class spacePaddle {
     ellipse(this.x - this.w / 3, this.y + this.h / 3, this.h / 2);
     fill(0, 255, 0); // green light
     ellipse(this.x, this.y + this.h / 3, this.h / 2);
+
+    //reset size when timer runs out, from chatgpt https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+    if (this.timer > 0) {
+      this.timer--;
+    } else {
+      this.w = this.originalW;
+    }
+  }
+
+  // increaseSize function from https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+  increaseSize(duration) {
+    this.w = this.originalW * 1.5; // increase size
+    this.timer = duration; // set timer
   }
 
   hitSpacePaddle(comet) {
@@ -119,17 +135,24 @@ class spacePaddle {
   }
 }
 class spaceBrick {
-  constructor(x, y, w, h, r) {
+  constructor(x, y, w, h, r, isSpecial = false) {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
     this.r = r; // gives rounded edges
+    this.isSpecial = isSpecial; //activate special bricks
   }
 
   drawAsteroid() {
     noStroke();
-    fill(112, 106, 89);
+
+    if (this.isSpecial) {
+      fill(209, 202, 182); //change colour for special bricks
+    } else {
+      fill(112, 106, 89);
+    }
+
     rect(this.x, this.y, this.w, this.h, this.r);
     fill(54, 51, 43);
     ellipse(this.x + this.h / 2, this.y + this.r, this.w / 3, this.h / 2);
@@ -162,7 +185,8 @@ for (let r = 0; r < rows; r++) {
   for (let c = 0; c < cols; c++) {
     let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
     let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-    bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 20));
+    let isSpecial = Math.random() < 0.1; // 10% chance of being special
+    bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 20, isSpecial));
   }
 }
 
@@ -211,13 +235,13 @@ function spaceScenery() {
   pop();
 }
 
-comet = new cometBall(200, 200, 20);
+comet = new cometBall(400, 500, 20);
 saucer = new spacePaddle(width / 2);
 
 function draw() {
   background(15, 15, 15);
 
-  // code from Garritt's video example
+  // blinking stars
   for (let index in starX) {
     noStroke();
     fill(255, 255, 255, Math.abs(Math.sin(starAlpha[index])) * 255);
@@ -232,9 +256,12 @@ function draw() {
     brick.drawAsteroid();
   }
 
-  // for loop explained (backwards iteration) by chatgpt https://chatgpt.com/share/674472ad-afd0-8007-99ef-06fabfa4b8a9
+  // following two explained (backwards iteration) by chatgpt https://chatgpt.com/share/674472ad-afd0-8007-99ef-06fabfa4b8a9
   for (let i = bricks.length - 1; i >= 0; i--) {
     if (bricks[i].collision(comet)) {
+      if (bricks[i].isSpecial) {
+        saucer.increaseSize(300); //temporary paddle size increase
+      }
       bricks.splice(i, 1);
       comet.moveY = comet.moveY * -1; // ball bounces back off of brick
     }
@@ -242,6 +269,19 @@ function draw() {
 
   comet.drawComet();
   comet.moveComet();
+
+  // Press B to activate speed Boost
+  if (keyIsDown(66)) {
+    if (!isBoosting) {
+      comet.moveX = comet.moveX * 1.8; // increase speed
+      comet.moveY = comet.moveY * 1.8;
+      isBoosting = true;
+    } else if (isBoosting) {
+      comet.moveX = comet.moveX / 1.8; // reset speed back to normal
+      comet.moveY = comet.moveY / 1.8;
+      isBoosting = false;
+    }
+  }
 
   comet.checkCometBoundaries();
 

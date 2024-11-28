@@ -15,6 +15,7 @@ let fishHeight = [15, 15, 10];
 let score = 0; // Player's score
 let lives = 3; // Player's lives
 let gameActive = true; // Flag to check if the game is active
+let isBoosting = false; // check if boost is active or not
 
 // Brick Variables
 let bricks = [];
@@ -73,9 +74,11 @@ class pearlBall {
 class shellPaddle {
   constructor(x) {
     this.x = x;
-    this.y = height - 170; //change back to 40
+    this.y = height - 40;
     this.w = 120;
     this.h = 20;
+    this.originalW = this.w; //store original width
+    this.timer = 0; //timer to track size duration
   }
 
   drawShellPaddle() {
@@ -89,6 +92,19 @@ class shellPaddle {
     fill(218, 200, 230);
     arc(this.x, this.y, this.w, this.h * 2, 0, PI, CHORD);
     arc(this.x - 75, this.y, this.w / 4, this.h - 10, 0, PI, CHORD);
+
+    //reset size when timer runs out, from chatgpt https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+    if (this.timer > 0) {
+      this.timer--;
+    } else {
+      this.w = this.originalW;
+    }
+  }
+
+  // increaseSize function from https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+  increaseSize(duration) {
+    this.w = this.originalW * 1.5; // increase size
+    this.timer = duration; // set timer
   }
 
   hitShellPaddle(shell) {
@@ -103,17 +119,24 @@ class shellPaddle {
 }
 
 class chestBrick {
-  constructor(x, y, w, h, r) {
+  constructor(x, y, w, h, r, isSpecial = false) {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
     this.r = r; // gives rounded edges
+    this.isSpecial = isSpecial; //activate special bricks
   }
 
   drawChest() {
     noStroke();
-    fill(46, 30, 1);
+
+    if (this.isSpecial) {
+      fill(138, 106, 69); //change colour for special bricks
+    } else {
+      fill(46, 30, 1);
+    }
+
     rect(this.x, this.y, this.w, this.h, this.r, this.r, 0);
     fill(77, 58, 24);
     rect(this.x, this.y + this.r, this.w, this.h / 5);
@@ -136,7 +159,8 @@ for (let r = 0; r < rows; r++) {
   for (let c = 0; c < cols; c++) {
     let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
     let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-    bricks.push(new chestBrick(x, y, brickWidth, brickHeight, 15));
+    let isSpecial = Math.random() < 0.1; // 10% chance of being special
+    bricks.push(new chestBrick(x, y, brickWidth, brickHeight, 15, isSpecial));
   }
 }
 
@@ -237,7 +261,7 @@ function oceanScenery() {
   arc(620, 565, 30, 30, PI, 0, CHORD);
 }
 
-pearl = new pearlBall(200, 200, 20);
+pearl = new pearlBall(400, 500, 20);
 shell = new shellPaddle(width / 2);
 
 function draw() {
@@ -251,13 +275,29 @@ function draw() {
   // for loop explained (backwards iteration) by chatgpt https://chatgpt.com/share/674472ad-afd0-8007-99ef-06fabfa4b8a9
   for (let i = bricks.length - 1; i >= 0; i--) {
     if (bricks[i].collision(pearl)) {
+      if (bricks[i].isSpecial) {
+        saucer.increaseSize(300); //temporary paddle size increase
+      }
       bricks.splice(i, 1);
       pearl.moveY = pearl.moveY * -1; // ball bounces back off of brick
     }
   }
 
   pearl.drawPearl();
-  // pearl.movePearl();
+  pearl.movePearl();
+
+  // Press B to activate speed Boost
+  if (keyIsDown(66)) {
+    if (!isBoosting) {
+      comet.moveX = comet.moveX * 1.8; // increase speed
+      comet.moveY = comet.moveY * 1.8;
+      isBoosting = true;
+    } else if (isBoosting) {
+      comet.moveX = comet.moveX / 1.8; // reset speed back to normal
+      comet.moveY = comet.moveY / 1.8;
+      isBoosting = false;
+    }
+  }
 
   pearl.checkPearlBoundaries();
 
