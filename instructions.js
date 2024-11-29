@@ -2,7 +2,7 @@ function setup() {
   createCanvas(800, 600);
 }
 
-let buttonX = 530;
+let buttonX = 330;
 let buttonY = 500;
 let buttonW = 150;
 let buttonH = 75;
@@ -15,43 +15,47 @@ function draw() {
   strokeWeight(3);
   fill(240, 245, 242);
   textSize(36);
-  text("How To Play:", 50, 70);
+  text("How To Play:", 50, 40);
 
   noStroke();
   textSize(22);
   fill(80, 94, 85);
 
   //subheadings
-  text("1. Start the Game", 50, 110);
-  text("2. Control the Paddle", 50, 210);
-  text("3. Destroy the Bricks", 50, 310);
-  text("4. Avoid Losing the Ball", 50, 410);
-  text("5. Boost", 50, 510);
+  text("1. Start the Game", 50, 70);
+  text("2. Control the Paddle", 50, 140);
+  text("3. Destroy the Bricks", 50, 210);
+  text("4. Avoid Losing the Ball", 50, 280);
+  text("5. Boost", 50, 350);
+  text("6. Score", 50, 420);
 
   //instructions
   textSize(18);
-  text("The ball starts moving as soon as the game begins.", 70, 140);
+  text("The ball starts moving as soon as the game begins.", 70, 90);
   text(
     "Your goal is to keep the ball in play and destroy all the bricks.",
     70,
-    170
+    110
   );
 
-  text("Move your mouse to the left or right to control the paddle.", 70, 240);
-  text("Catch the ball with your paddle to keep it bouncing.", 70, 270);
+  text("Move your mouse to the left or right to control the paddle.", 70, 160);
+  text("Catch the ball with your paddle to keep it bouncing.", 70, 180);
 
   text(
     "When the ball hits a brick, the brick disappears and the ball bounces back.",
     70,
-    340
+    230
   );
-  text("Clear all the bricks to win the game.", 70, 370);
+  text("Clear all the bricks to win the game.", 70, 250);
 
-  text("If the ball falls past your paddle, you lose a life.", 70, 440);
-  text("The game ends when all lives are lost.", 70, 470);
+  text("If the ball falls past your paddle, you lose a life.", 70, 300);
+  text("The game ends when all lives are lost.", 70, 320);
 
-  text("Hold down the B key to increase ball speed.", 70, 540);
-  text("Hit lighter bricks to increase paddle size.", 70, 570);
+  text("Hold down the B key to increase ball speed.", 70, 370);
+  text("Hit the special bricks to increase paddle size.", 70, 390);
+
+  text("Hitting the regular bricks gives you 5 points.", 70, 440);
+  text("Hitting the special bricks gives you 10 points.", 70, 460);
 
   //home button
 
@@ -69,15 +73,15 @@ function draw() {
   push();
   rotate(-0.2);
   fill(152, 154, 156);
-  ellipse(550, 325, 50, 20);
+  ellipse(550, 295, 50, 20);
   fill(186, 216, 247);
-  arc(550, 325, 30, 30, PI, 0, CHORD);
+  arc(550, 295, 30, 30, PI, 0, CHORD);
   fill(40, 44, 48);
-  circle(550, 330, 3);
-  circle(560, 329, 3);
-  circle(540, 329, 3);
-  circle(570, 325, 3);
-  circle(530, 325, 3);
+  circle(550, 300, 3);
+  circle(560, 299, 3);
+  circle(540, 299, 3);
+  circle(570, 295, 3);
+  circle(530, 295, 3);
   pop();
 
   //bamboo

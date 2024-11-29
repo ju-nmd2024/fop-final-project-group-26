@@ -14,7 +14,7 @@ let fishHeight = [15, 15, 10];
 // Game Variables
 let score = 0; // Player's score
 let lives = 3; // Player's lives
-let gameActive = true; // Flag to check if the game is active
+let gameActive = true; // check if the game is active
 let isBoosting = false; // check if boost is active or not
 
 // Brick Variables
@@ -29,7 +29,7 @@ let offsetX = 75; // offset x direction
 let offsetY = 50; // offset y direction
 
 function setup() {
-  createCanvas(800, 600); //change back to 600
+  createCanvas(800, 800);
 }
 
 // Ball class
@@ -39,7 +39,7 @@ class pearlBall {
     this.y = y;
     this.r = r;
     this.moveX = 2;
-    this.moveY = -6;
+    this.moveY = -4;
   }
 
   // draw the pearl
@@ -72,7 +72,7 @@ class pearlBall {
   if (this.y - this.r > height) {
     lives--;
     if (lives > 0) {
-      // Reset coconut position
+      // Reset pearl position
       this.x = width / 2;
       this.y = height - 100;
       this.moveX = 2;
@@ -174,7 +174,7 @@ for (let r = 0; r < rows; r++) {
   for (let c = 0; c < cols; c++) {
     let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
     let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-    let isSpecial = Math.random() < 0.1; // 10% chance of being special
+    let isSpecial = Math.random() < 0.08; // 8% chance of being special
     bricks.push(new chestBrick(x, y, brickWidth, brickHeight, 15, isSpecial));
   }
 }
@@ -291,7 +291,7 @@ function draw() {
   for (let i = bricks.length - 1; i >= 0; i--) {
     if (bricks[i].collision(pearl)) {
       if (bricks[i].isSpecial) {
-        saucer.increaseSize(300); //temporary paddle size increase
+        shell.increaseSize(300); //temporary paddle size increase
       }
       // Increase score
       score += bricks[i].isSpecial ? 10 : 5;
@@ -301,18 +301,18 @@ function draw() {
   }
 
   pearl.drawPearl();
-  pearl.movePearl();
+  // pearl.movePearl();
   
 
   // Press B to activate speed Boost
   if (keyIsDown(66)) {
     if (!isBoosting) {
-      comet.moveX = comet.moveX * 1.8; // increase speed
-      comet.moveY = comet.moveY * 1.8;
+      pearl.moveX = pearl.moveX * 1.8; // increase speed
+      pearl.moveY = pearl.moveY * 1.8;
       isBoosting = true;
     } else if (isBoosting) {
-      comet.moveX = comet.moveX / 1.8; // reset speed back to normal
-      comet.moveY = comet.moveY / 1.8;
+      pearl.moveX = pearl.moveX / 1.8; // reset speed back to normal
+      pearl.moveY = pearl.moveY / 1.8;
       isBoosting = false;
     }
   }

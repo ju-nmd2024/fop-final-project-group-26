@@ -76,7 +76,6 @@ class jungleBall {
   }
 }
 
-
 // Paddle class
 class junglePaddle {
   constructor(x) {
@@ -172,7 +171,7 @@ for (let r = 0; r < rows; r++) {
   for (let c = 0; c < cols; c++) {
     let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
     let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-    let isSpecial = Math.random() < 0.1; // 10% chance of being special
+    let isSpecial = Math.random() < 0.08; // 8% chance of being special
     bricks.push(new jungleBrick(x, y, brickWidth, brickHeight, 10, isSpecial));
   }
 }
@@ -310,7 +309,6 @@ function draw() {
       // Increase score
       score += bricks[i].isSpecial ? 10 : 5;
 
-
       // Remove the brick from the array
       bricks.splice(i, 1);
     }
@@ -328,8 +326,6 @@ function draw() {
       isBoosting = false;
     }
   }
-
-  
 
   // Display score and lives
   textSize(24);

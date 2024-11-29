@@ -46,7 +46,7 @@ class cometBall {
     this.y = y;
     this.r = r;
     this.moveX = 2;
-    this.moveY = -6;
+    this.moveY = -4;
   }
 
   // draw the comet
@@ -200,7 +200,7 @@ for (let r = 0; r < rows; r++) {
   for (let c = 0; c < cols; c++) {
     let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
     let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-    let isSpecial = Math.random() < 0.1; // 10% chance of being special
+    let isSpecial = Math.random() < 0.08; // 8% chance of being special
     bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 20, isSpecial));
   }
 }
