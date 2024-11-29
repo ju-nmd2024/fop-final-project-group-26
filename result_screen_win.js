@@ -1,9 +1,5 @@
 let c1 = color(29, 32, 41);
 let c2 = color(195, 255, 112);
-let font;
-function preload() {
-  font = loadFont ('/Audiowide Regular/'); 
-}
 
 //Stars
 // code modified from Garritt's video example
