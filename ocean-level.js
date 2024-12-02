@@ -33,7 +33,7 @@ function setup() {
 }
 
 // Ball class
-export default class pearlBall {
+class pearlBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
