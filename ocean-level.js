@@ -33,7 +33,7 @@ function setup() {
 }
 
 // Ball class
-class pearlBall {
+export default class pearlBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
@@ -58,31 +58,31 @@ class pearlBall {
 
   // check canvas boundaries
   checkPearlBoundaries() {
-   // Left or right boundary
-   if (this.x - this.r <= 0 || this.x + this.r >= width) {
-    this.moveX *= -1;
-  }
+    // Left or right boundary
+    if (this.x - this.r <= 0 || this.x + this.r >= width) {
+      this.moveX *= -1;
+    }
 
-  // Top boundary
-  if (this.y - this.r <= 0) {
-    this.moveY *= -1;
-  }
+    // Top boundary
+    if (this.y - this.r <= 0) {
+      this.moveY *= -1;
+    }
 
-  // Bottom boundary: Lose life
-  if (this.y - this.r > height) {
-    lives--;
-    if (lives > 0) {
-      // Reset pearl position
-      this.x = width / 2;
-      this.y = height - 100;
-      this.moveX = 2;
-      this.moveY = -4;
-    } else {
-      gameActive = false; // End game
-      noLoop();
+    // Bottom boundary: Lose life
+    if (this.y - this.r > height) {
+      lives--;
+      if (lives > 0) {
+        // Reset pearl position
+        this.x = width / 2;
+        this.y = height - 100;
+        this.moveX = 2;
+        this.moveY = -4;
+      } else {
+        gameActive = false; // End game
+        noLoop();
+      }
     }
   }
-}
 }
 
 // Paddle class
@@ -301,8 +301,7 @@ function draw() {
   }
 
   pearl.drawPearl();
-  // pearl.movePearl();
-  
+  pearl.movePearl();
 
   // Press B to activate speed Boost
   if (keyIsDown(66)) {

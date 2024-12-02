@@ -22,7 +22,7 @@ function setup() {
 }
 
 // Ball class
-class jungleBall {
+ export default class jungleBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
