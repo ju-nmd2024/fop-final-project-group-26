@@ -33,7 +33,7 @@ function setup() {
 }
 
 // Ball class
-class pearlBall {
+export class pearlBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
@@ -86,7 +86,7 @@ class pearlBall {
 }
 
 // Paddle class
-class shellPaddle {
+export class shellPaddle {
   constructor(x) {
     this.x = x;
     this.y = height - 40;
@@ -133,7 +133,7 @@ class shellPaddle {
   }
 }
 
-class chestBrick {
+export class chestBrick {
   constructor(x, y, w, h, r, isSpecial = false) {
     this.x = x;
     this.y = y;

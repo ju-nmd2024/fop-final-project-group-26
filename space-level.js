@@ -40,7 +40,7 @@ function setup() {
 }
 
 // Ball class
-class cometBall {
+export class cometBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
@@ -66,34 +66,34 @@ class cometBall {
   // check canvas boundaries
   checkCometBoundaries() {
     // Left or right boundary
-   if (this.x - this.r <= 0 || this.x + this.r >= width) {
-    this.moveX *= -1;
-  }
+    if (this.x - this.r <= 0 || this.x + this.r >= width) {
+      this.moveX *= -1;
+    }
 
-  // Top boundary
-  if (this.y - this.r <= 0) {
-    this.moveY *= -1;
-  }
+    // Top boundary
+    if (this.y - this.r <= 0) {
+      this.moveY *= -1;
+    }
 
-  // Bottom boundary: Lose life
-  if (this.y - this.r > height) {
-    lives--;
-    if (lives > 0) {
-      // Reset coconut position
-      this.x = width / 2;
-      this.y = height - 100;
-      this.moveX = 2;
-      this.moveY = -4;
-    } else {
-      gameActive = false; // End game
-      noLoop();
+    // Bottom boundary: Lose life
+    if (this.y - this.r > height) {
+      lives--;
+      if (lives > 0) {
+        // Reset coconut position
+        this.x = width / 2;
+        this.y = height - 100;
+        this.moveX = 2;
+        this.moveY = -4;
+      } else {
+        gameActive = false; // End game
+        noLoop();
+      }
     }
   }
 }
-}
 
 // Paddle class
-class spacePaddle {
+export class spacePaddle {
   constructor(x) {
     this.x = x;
     this.y = height - 40;
@@ -149,7 +149,7 @@ class spacePaddle {
     }
   }
 }
-class spaceBrick {
+export class spaceBrick {
   constructor(x, y, w, h, r, isSpecial = false) {
     this.x = x;
     this.y = y;
@@ -277,8 +277,8 @@ function draw() {
       if (bricks[i].isSpecial) {
         saucer.increaseSize(300); //temporary paddle size increase
       }
-       // Increase score
-       score += bricks[i].isSpecial ? 10 : 5;
+      // Increase score
+      score += bricks[i].isSpecial ? 10 : 5;
 
       bricks.splice(i, 1);
       comet.moveY = comet.moveY * -1; // ball bounces back off of brick

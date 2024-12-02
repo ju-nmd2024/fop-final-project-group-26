@@ -22,7 +22,7 @@ function setup() {
 }
 
 // Ball class
-export default class jungleBall {
+export class jungleBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
@@ -77,7 +77,7 @@ export default class jungleBall {
 }
 
 // Paddle class
-export default class junglePaddle {
+export class junglePaddle {
   constructor(x) {
     this.x = x;
     this.y = height - 70;
@@ -124,7 +124,7 @@ export default class junglePaddle {
     }
   }
 }
-export default class jungleBrick {
+export class jungleBrick {
   constructor(x, y, w, h, r, isSpecial = false) {
     this.x = x;
     this.y = y;
