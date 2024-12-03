@@ -22,7 +22,7 @@ function setup() {
 }
 
 // Ball class
-export class jungleBall {
+class jungleBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
@@ -77,7 +77,7 @@ export class jungleBall {
 }
 
 // Paddle class
-export class junglePaddle {
+class junglePaddle {
   constructor(x) {
     this.x = x;
     this.y = height - 70;
@@ -124,7 +124,7 @@ export class junglePaddle {
     }
   }
 }
-export class jungleBrick {
+class jungleBrick {
   constructor(x, y, w, h, r, isSpecial = false) {
     this.x = x;
     this.y = y;
@@ -285,7 +285,7 @@ function jungleScenery() {
 coconut = new jungleBall(400, 500, 20);
 bamboo = new junglePaddle(width / 2);
 
-function draw() {
+function drawJungleLevel() {
   jungleScenery();
 
   for (let brick of bricks) {
@@ -342,4 +342,8 @@ function draw() {
 
   bamboo.drawJunglePaddle();
   bamboo.hitJunglePaddle(coconut);
+}
+
+function draw() {
+  drawJungleLevel();
 }

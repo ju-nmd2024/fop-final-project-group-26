@@ -7,7 +7,7 @@ let buttonY = 500;
 let buttonW = 150;
 let buttonH = 75;
 let buttonR = 20;
-function draw() {
+function drawInstructions() {
   background(202, 219, 208);
 
   //how to play
@@ -113,4 +113,8 @@ function draw() {
   line(771, 660, 789, 660);
   line(771, 760, 789, 760);
   pop();
+}
+
+function draw() {
+  drawInstructions();
 }

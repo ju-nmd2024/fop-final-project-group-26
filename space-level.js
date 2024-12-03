@@ -40,7 +40,7 @@ function setup() {
 }
 
 // Ball class
-export class cometBall {
+class cometBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
@@ -93,7 +93,7 @@ export class cometBall {
 }
 
 // Paddle class
-export class spacePaddle {
+class spacePaddle {
   constructor(x) {
     this.x = x;
     this.y = height - 40;
@@ -149,7 +149,7 @@ export class spacePaddle {
     }
   }
 }
-export class spaceBrick {
+class spaceBrick {
   constructor(x, y, w, h, r, isSpecial = false) {
     this.x = x;
     this.y = y;
@@ -253,7 +253,7 @@ function spaceScenery() {
 comet = new cometBall(400, 500, 20);
 saucer = new spacePaddle(width / 2);
 
-function draw() {
+function drawSpaceLevel() {
   background(15, 15, 15);
 
   // blinking stars
@@ -313,4 +313,8 @@ function draw() {
   textAlign(LEFT, TOP);
   text("Score: " + score, 10, 10);
   text("Lives: " + lives, 10, 40);
+}
+
+function draw() {
+  drawSpaceLevel();
 }

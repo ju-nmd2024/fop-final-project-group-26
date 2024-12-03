@@ -29,11 +29,11 @@ let offsetX = 75; // offset x direction
 let offsetY = 50; // offset y direction
 
 function setup() {
-  createCanvas(800, 800);
+  createCanvas(800, 600);
 }
 
 // Ball class
-export class pearlBall {
+class pearlBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
@@ -86,7 +86,7 @@ export class pearlBall {
 }
 
 // Paddle class
-export class shellPaddle {
+class shellPaddle {
   constructor(x) {
     this.x = x;
     this.y = height - 40;
@@ -133,7 +133,7 @@ export class shellPaddle {
   }
 }
 
-export class chestBrick {
+class chestBrick {
   constructor(x, y, w, h, r, isSpecial = false) {
     this.x = x;
     this.y = y;
@@ -279,7 +279,7 @@ function oceanScenery() {
 pearl = new pearlBall(400, 500, 20);
 shell = new shellPaddle(width / 2);
 
-function draw() {
+function drawOceanLevel() {
   oceanScenery();
 
   // draw brick grid
@@ -329,4 +329,8 @@ function draw() {
   textAlign(LEFT, TOP);
   text("Score: " + score, 10, 10);
   text("Lives: " + lives, 10, 40);
+}
+
+function draw() {
+  drawOceanLevel();
 }

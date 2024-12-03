@@ -19,26 +19,25 @@ for (let i = 0; i < 300; i++) {
 
 //Setup
 function setup() {
-    createCanvas(800, 600);
+  createCanvas(800, 600);
+}
+
+//Start Screen
+function resultScreen() {
+  // gradient adapted from https://editor.p5js.org/J_Silva/sketches/mJslozHWg
+  for (let y = 1; y < height; y++) {
+    n = map(y, 0, height, 0, 0.4);
+    let newc = lerpColor(c1, c2, n);
+    stroke(newc);
+    line(0, y, width, y);
   }
+  //text
+  push();
 
-  //Start Screen
-  function resultScreen(){
-    
-      // gradient adapted from https://editor.p5js.org/J_Silva/sketches/mJslozHWg
-      for (let y = 1; y < height; y++) {
-        n = map(y, 0, height, 0, 0.4);
-        let newc = lerpColor(c1, c2, n);
-        stroke(newc);
-        line(0, y, width, y);
-      }
-//text
-push();
-
- textSize(40);
- fill(66, 148, 52);
- textFont("Lilita One");
-  text("YOU WIN! CONGRATULATIONS!", width / 2 -255, height / 2 - 80);
+  textSize(40);
+  fill(66, 148, 52);
+  textFont("Lilita One");
+  text("YOU WIN! CONGRATULATIONS!", width / 2 - 255, height / 2 - 80);
   stroke(20);
   pop();
 
@@ -47,19 +46,17 @@ push();
   fill(255, 255, 255);
   text("Press Key to Restart", width / 2 - 118, height / 1.8);
   textSize(15);
-  }
-
-  //Draw
-  function draw(){
-    resultScreen();
-
- // code from Garritt's video example
- for (let index in starX) {
-  noStroke();
-  fill(255, 255, 255, Math.abs(Math.sin(starAlpha[index])) * 255);
-  ellipse(starX[index], starY[index], 3);
-  starAlpha[index] = starAlpha[index] + 0.05;
 }
- }
 
-  
+//Draw
+function draw() {
+  resultScreen();
+
+  // code from Garritt's video example
+  for (let index in starX) {
+    noStroke();
+    fill(255, 255, 255, Math.abs(Math.sin(starAlpha[index])) * 255);
+    ellipse(starX[index], starY[index], 3);
+    starAlpha[index] = starAlpha[index] + 0.05;
+  }
+}

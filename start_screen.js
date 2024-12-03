@@ -7,12 +7,11 @@ let fishHeight = [15, 15, 10];
 
 let gameState = "start";
 
-
 function setup() {
   createCanvas(800, 600);
 }
 
-function startScreen() {
+function drawStartScreen() {
   background(196, 212, 133);
 
   push();
@@ -233,6 +232,5 @@ function startScreen() {
   text("Read The Instructions", width / 2 - 106, height / 1.6);
 }
 function draw() {
-  startScreen();
+  drawStartScreen();
 }
-

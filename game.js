@@ -1,17 +1,41 @@
+function setup() {
+  createCanvas(800, 600);
+}
+// window.setup = setup;
+
+// Fish Loop Variables
+let fishX = [160, 180, 200];
+let fishY = [400, 435, 465];
+let fishSpeed = [-1.5, -1.3, -1.5];
+let fishWidth = [70, 70, 50];
+let fishHeight = [15, 15, 10];
+
+//Instruction Home Button Variables
+let buttonX = 330;
+let buttonY = 500;
+let buttonW = 150;
+let buttonH = 75;
+let buttonR = 20;
+
 // Character Variables
-let coconut;
-let bamboo;
-let pearl;
-let shell;
-let comet;
-let saucer;
+let pearl, shell, coconut, bamboo, comet, saucer;
 
 // Game Variables
-let gameState = "start"; // possible alternatives are start, instructions, ocean, jungle, space, win and lost.
+let gameState = "start";
+let gameWon = false;
+let gameLost = false;
 let score = 0; // Player's score
 let lives = 3; // Player's lives
 let gameActive = true; // check if the game is active
 let isBoosting = false; // check if boost is active or not
+
+//Gradient Colours
+let c1 = color(129, 210, 227);
+let c2 = color(71, 116, 125);
+let c1Win = color(29, 32, 41);
+let c2Win = color(195, 255, 112);
+let c1Lost = color(29, 32, 41);
+let c2Lost = color(125, 0, 0);
 
 // Brick Variables
 let bricks = [];
@@ -21,28 +45,26 @@ let brickWidth = 100;
 let brickHeight = 50;
 let spaceX = 10; // space between bricks x
 let spaceY = 10; // space between bricks y
-let offsetX = 75; // offset top left corner of canvas
-let offsetY = 50; // offset top of the canvas
+let offsetX = 75; // offset x direction
+let offsetY = 50; // offset y direction
 
-function setup() {
-  createCanvas(800, 800);
+//Stars
+// code modified from Garritt's video example
+let starX = [];
+let starY = [];
+let starAlpha = [];
+
+for (let i = 0; i < 300; i++) {
+  const x = Math.floor(Math.random() * width);
+  const y = Math.floor(Math.random() * height);
+  const alpha = Math.random();
+
+  starX.push(x);
+  starY.push(y);
+  starAlpha.push(alpha);
 }
 
-// import classes
-
-import { jungleBall, junglePaddle, jungleBrick } from "./jungle_level.js";
-import { pearlBall, shellPaddle, chestBrick } from "./ocean-level.js";
-import { cometBall, spacePaddle, spaceBrick } from "./space-level.js";
-
-// put functions for each level
-
-// Fish Variables
-let fishX = [160, 180, 200];
-let fishY = [400, 435, 465];
-let fishSpeed = [-1.5, -1.3, -1.5];
-let fishWidth = [70, 70, 50];
-let fishHeight = [15, 15, 10];
-
+// START SCREEN
 function drawStartScreen() {
   background(196, 212, 133);
 
@@ -259,17 +281,10 @@ function drawStartScreen() {
   textSize(20);
   textFont("Audiowide Regular");
   fill(255, 255, 255);
-  text("Press Key to Start", width / 2 - 120, height / 1.8);
-  textSize(15);
-  text("Read The Instructions", width / 2 - 106, height / 1.6);
+  text("Press the i Key to Read Instructions", width / 2 - 150, height / 1.8);
 }
 
-let buttonX = 330;
-let buttonY = 500;
-let buttonW = 150;
-let buttonH = 75;
-let buttonR = 20;
-
+// INSTRUCTIONS
 function drawInstructions() {
   background(202, 219, 208);
 
@@ -291,6 +306,7 @@ function drawInstructions() {
   text("4. Avoid Losing the Ball", 50, 280);
   text("5. Boost", 50, 350);
   text("6. Score", 50, 420);
+  text("KEYS", 550, 330);
 
   //instructions
   textSize(18);
@@ -319,6 +335,10 @@ function drawInstructions() {
 
   text("Hitting the regular bricks gives you 5 points.", 70, 440);
   text("Hitting the special bricks gives you 10 points.", 70, 460);
+
+  text("press o for ocean level", 490, 355);
+  text("press j for jungle level", 490, 380);
+  text("press s for space level", 490, 405);
 
   //home button
 
@@ -378,20 +398,158 @@ function drawInstructions() {
   pop();
 }
 
-let c1 = color(129, 210, 227);
-let c2 = color(71, 116, 125);
+// OCEAN LEVEL
 
-function drawOceanLevel() {
-  pearl = new pearlBall(400, 500, 20);
-  shell = new shellPaddle(width / 2);
+// Ball Class Ocean
+class pearlBall {
+  constructor(x, y, r) {
+    this.x = x;
+    this.y = y;
+    this.r = r;
+    this.moveX = 2;
+    this.moveY = -4;
+  }
 
-  // Fish Variables
-  fishX = [160, 180, 200];
-  fishY = [400, 435, 465];
-  fishSpeed = [-1.5, -1.3, -1.5];
-  fishWidth = [70, 70, 50];
-  fishHeight = [15, 15, 10];
+  // draw the pearl
+  drawPearl() {
+    stroke(201, 183, 201);
+    strokeWeight(3);
+    fill(255, 225, 240);
+    circle(this.x, this.y, this.r * 2);
+  }
 
+  // pearl movements
+  movePearl() {
+    this.x = this.x + this.moveX;
+    this.y = this.y + this.moveY;
+  }
+
+  // check canvas boundaries
+  checkPearlBoundaries() {
+    // Left or right boundary
+    if (this.x - this.r <= 0 || this.x + this.r >= width) {
+      this.moveX *= -1;
+    }
+
+    // Top boundary
+    if (this.y - this.r <= 0) {
+      this.moveY *= -1;
+    }
+
+    // Bottom boundary: Lose life
+    if (this.y - this.r > height) {
+      lives--;
+      if (lives > 0) {
+        // Reset pearl position
+        this.x = width / 2;
+        this.y = height - 100;
+        this.moveX = 2;
+        this.moveY = -4;
+      } else {
+        gameActive = false; // End game
+        noLoop();
+      }
+    }
+  }
+}
+
+// Paddle Class Ocean
+class shellPaddle {
+  constructor(x) {
+    this.x = x;
+    this.y = height - 40;
+    this.w = 120;
+    this.h = 20;
+    this.originalW = this.w; //store original width
+    this.timer = 0; //timer to track size duration
+  }
+
+  drawShellPaddle() {
+    this.x = mouseX;
+    noStroke();
+
+    // clam shell
+    stroke(137, 94, 166);
+    strokeWeight(2.5);
+    strokeJoin(ROUND);
+    fill(218, 200, 230);
+    arc(this.x, this.y, this.w, this.h * 2, 0, PI, CHORD);
+    arc(this.x - 75, this.y, this.w / 4, this.h - 10, 0, PI, CHORD);
+
+    //reset size when timer runs out, from chatgpt https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+    if (this.timer > 0) {
+      this.timer--;
+    } else {
+      this.w = this.originalW;
+    }
+  }
+
+  // increaseSize function from https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+  increaseSize(duration) {
+    this.w = this.originalW * 1.5; // increase size
+    this.timer = duration; // set timer
+  }
+
+  hitShellPaddle(shell) {
+    if (
+      shell.y + shell.r >= this.y &&
+      shell.x > this.x - this.w / 2 &&
+      shell.x < this.x + this.w / 2
+    ) {
+      shell.moveY = shell.moveY * -1;
+    }
+  }
+}
+
+// Brick Class Ocean
+class chestBrick {
+  constructor(x, y, w, h, r, isSpecial = false) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.r = r; // gives rounded edges
+    this.isSpecial = isSpecial; //activate special bricks
+  }
+
+  drawChest() {
+    noStroke();
+
+    if (this.isSpecial) {
+      fill(138, 106, 69); //change colour for special bricks
+    } else {
+      fill(46, 30, 1);
+    }
+
+    rect(this.x, this.y, this.w, this.h, this.r, this.r, 0);
+    fill(77, 58, 24);
+    rect(this.x, this.y + this.r, this.w, this.h / 5);
+    fill(199, 144, 42);
+    rect(this.x + 40, this.y + this.r, this.w / 5, this.h / 4);
+  }
+  // remove brick when colliding with ball
+  collision(pearl) {
+    return (
+      pearl.x + pearl.r > this.x &&
+      pearl.x - pearl.r < this.x + this.w &&
+      pearl.y + pearl.r > this.y &&
+      pearl.y - pearl.r < this.y + this.h
+    );
+  }
+}
+
+// brick grid
+for (let r = 0; r < rows; r++) {
+  for (let c = 0; c < cols; c++) {
+    let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
+    let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
+    let isSpecial = Math.random() < 0.08; // 8% chance of being special
+    bricks.push(new chestBrick(x, y, brickWidth, brickHeight, 15, isSpecial));
+  }
+}
+
+// Underwater Scenery
+function oceanScenery() {
   // gradient adapted from https://editor.p5js.org/J_Silva/sketches/mJslozHWg
   for (let y = 0; y < height; y++) {
     n = map(y, 0, height, 0, 1);
@@ -422,7 +580,6 @@ function drawOceanLevel() {
     );
   }
 
-  // environment
   //sand
   noStroke();
   fill(209, 163, 88);
@@ -486,18 +643,14 @@ function drawOceanLevel() {
   arc(230, 565, 40, 30, PI, 0, CHORD);
   fill(235, 87, 141);
   arc(620, 565, 30, 30, PI, 0, CHORD);
+}
 
-  // brick grid
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
-      let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-      let isSpecial = Math.random() < 0.08; // 8% chance of being special
-      bricks.push(new chestBrick(x, y, brickWidth, brickHeight, 15, isSpecial));
-    }
-  }
+pearl = new pearlBall(400, 500, 20);
+shell = new shellPaddle(width / 2);
 
-  // draw brick grid
+function drawOceanLevel() {
+  oceanScenery();
+
   for (let brick of bricks) {
     brick.drawChest();
   }
@@ -544,12 +697,168 @@ function drawOceanLevel() {
   textAlign(LEFT, TOP);
   text("Score: " + score, 10, 10);
   text("Lives: " + lives, 10, 40);
+
+  // Check if player has lost all lives
+  if (lives <= 0) {
+    gameLost = true;
+  }
+
+  // Check if all bricks have been cleared
+  if (bricks.length === 0) {
+    gameWon = true;
+  }
 }
 
-function drawJungleLevel() {
-  coconut = new jungleBall(400, 500, 20);
-  bamboo = new junglePaddle(width / 2);
+//JUNGLE LEVEL
 
+// Ball Class Jungle
+class jungleBall {
+  constructor(x, y, r) {
+    this.x = x;
+    this.y = y;
+    this.r = r;
+    this.moveX = 2;
+    this.moveY = -4;
+  }
+
+  // draw the coconut
+  drawCoconut() {
+    stroke(74, 47, 48);
+    strokeWeight(5);
+    fill(196, 172, 157);
+    ellipse(this.x, this.y, this.r * 2);
+    noStroke();
+    fill(255, 255, 255);
+    ellipse(this.x, this.y, this.r * 1.5);
+  }
+
+  // coconut movements
+  moveCoconut() {
+    this.x = this.x + this.moveX;
+    this.y = this.y + this.moveY;
+  }
+
+  checkCoconutBoundaries() {
+    // Left or right boundary
+    if (this.x - this.r <= 0 || this.x + this.r >= width) {
+      this.moveX *= -1;
+    }
+
+    // Top boundary
+    if (this.y - this.r <= 0) {
+      this.moveY *= -1;
+    }
+
+    // Bottom boundary: Lose life
+    if (this.y - this.r > height) {
+      lives--;
+      if (lives > 0) {
+        // Reset coconut position
+        this.x = width / 2;
+        this.y = height - 100;
+        this.moveX = 2;
+        this.moveY = -4;
+      } else {
+        gameActive = false; // End game
+        noLoop();
+      }
+    }
+  }
+}
+
+// Paddle Class Jungle
+class junglePaddle {
+  constructor(x) {
+    this.x = x;
+    this.y = height - 70;
+    this.w = 120;
+    this.h = 20;
+    this.originalW = this.w; //store original width
+    this.timer = 0; //timer to track size duration
+  }
+
+  drawJunglePaddle() {
+    this.x = mouseX;
+    // noStroke();
+
+    // paddle
+    fill(230, 216, 62);
+    stroke(230, 156, 30);
+    strokeWeight(2);
+    ellipse(this.x, this.y, this.w * 1.5, this.h * 0.3);
+    ellipse(this.x, this.y + 5, this.w * 1.5, this.h * 0.3);
+    ellipse(this.x, this.y + 10, this.w * 1.5, this.h * 0.3);
+    ellipse(this.x, this.y + 15, this.w * 1.5, this.h * 0.3);
+
+    //reset size when timer runs out, from chatgpt https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+    if (this.timer > 0) {
+      this.timer--;
+    } else {
+      this.w = this.originalW;
+    }
+  }
+
+  // increaseSize function from https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+  increaseSize(duration) {
+    this.w = this.originalW * 1.5; // increase size
+    this.timer = duration; // set timer
+  }
+
+  hitJunglePaddle(coconut) {
+    if (
+      coconut.y + coconut.r >= this.y &&
+      coconut.x > this.x - this.w / 2 &&
+      coconut.x < this.x + this.w / 2
+    ) {
+      coconut.moveY = coconut.moveY * -1;
+    }
+  }
+}
+
+// Brick Class Jungle
+class jungleBrick {
+  constructor(x, y, w, h, r, isSpecial = false) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.r = r;
+    this.isSpecial = isSpecial; //activate special bricks
+  }
+
+  drawStones() {
+    noStroke();
+
+    if (this.isSpecial) {
+      fill(171, 173, 158); //change colour for special bricks
+    } else {
+      fill(108, 110, 94);
+    }
+    rect(this.x, this.y, this.w, this.h, this.r);
+    fill(133, 135, 116);
+    rect(this.x + this.h / 4, this.y + this.r, this.w / 3, this.h / 4);
+    rect(this.x + this.h * 1, this.y + this.r * 3.4, this.w / 3, this.h / 6);
+    rect(
+      this.x + this.h + this.r / 4,
+      this.y + this.r / 3,
+      this.w / 4,
+      this.h / 7
+    );
+  }
+  // remove brick when colliding with ball
+  collision(coconut) {
+    if (
+      coconut.x + coconut.r > this.x &&
+      coconut.x - coconut.r < this.x + this.w &&
+      coconut.y + coconut.r > this.y &&
+      coconut.y - coconut.r < this.y + this.h
+    ) {
+      coconut.moveY = coconut.moveY * -1;
+    }
+  }
+}
+// Jungle Scenery
+function jungleScenery() {
   background(196, 212, 133);
 
   push();
@@ -633,24 +942,31 @@ function drawJungleLevel() {
   line(771, 760, 789, 760);
 
   pop();
+}
 
-  // brick grid
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
-      let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-      let isSpecial = Math.random() < 0.08; // 8% chance of being special
-      bricks.push(
-        new jungleBrick(x, y, brickWidth, brickHeight, 10, isSpecial)
-      );
-    }
-  }
+coconut = new jungleBall(400, 500, 20);
+bamboo = new junglePaddle(width / 2);
+
+// // brick grid
+// for (let r = 0; r < rows; r++) {
+//   for (let c = 0; c < cols; c++) {
+//     let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
+//     let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
+//     let isSpecial = Math.random() < 0.08; // 8% chance of being special
+//     bricks.push(new jungleBrick(x, y, brickWidth, brickHeight, 10, isSpecial));
+//   }
+// }
+
+function drawJungleLevel() {
+  jungleScenery();
+
   for (let brick of bricks) {
-    brick.drawStones();
+    // brick.drawStones();
   }
+
   // Iterate over bricks and check for collisions
   for (let i = bricks.length - 1; i >= 0; i--) {
-    bricks[i].drawStones();
+    // bricks[i].drawStones();
     if (
       coconut.x + coconut.r > bricks[i].x &&
       coconut.x - coconut.r < bricks[i].x + bricks[i].w &&
@@ -699,36 +1015,190 @@ function drawJungleLevel() {
 
   bamboo.drawJunglePaddle();
   bamboo.hitJunglePaddle(coconut);
+
+  // Check if player has lost all lives
+  if (lives <= 0) {
+    gameLost = true;
+  }
+
+  // Check if all bricks have been cleared
+  if (bricks.length === 0) {
+    gameWon = true;
+  }
 }
 
-function drawSpaceLevel() {
-  comet = new cometBall(400, 500, 20);
-  saucer = new spacePaddle(width / 2);
+// SPACE LEVEL
 
-  //Stars
-  // code modified from Garritt's video example
-  let starX = [];
-  let starY = [];
-  let starAlpha = [];
-
-  for (let i = 0; i < 300; i++) {
-    const x = Math.floor(Math.random() * width);
-    const y = Math.floor(Math.random() * height);
-    const alpha = Math.random();
-
-    starX.push(x);
-    starY.push(y);
-    starAlpha.push(alpha);
+// Ball Class Space
+class cometBall {
+  constructor(x, y, r) {
+    this.x = x;
+    this.y = y;
+    this.r = r;
+    this.moveX = 2;
+    this.moveY = -4;
   }
-  // brick grid
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
-      let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-      let isSpecial = Math.random() < 0.08; // 8% chance of being special
-      bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 20, isSpecial));
+
+  // draw the comet
+  drawComet() {
+    stroke(2, 151, 214);
+    strokeWeight(4);
+    fill(204, 234, 252);
+    circle(this.x, this.y, this.r * 2);
+  }
+
+  // comet movements
+  moveComet() {
+    this.x = this.x + this.moveX;
+    this.y = this.y + this.moveY;
+  }
+
+  // check canvas boundaries
+  checkCometBoundaries() {
+    // Left or right boundary
+    if (this.x - this.r <= 0 || this.x + this.r >= width) {
+      this.moveX *= -1;
+    }
+
+    // Top boundary
+    if (this.y - this.r <= 0) {
+      this.moveY *= -1;
+    }
+
+    // Bottom boundary: Lose life
+    if (this.y - this.r > height) {
+      lives--;
+      if (lives > 0) {
+        // Reset coconut position
+        this.x = width / 2;
+        this.y = height - 100;
+        this.moveX = 2;
+        this.moveY = -4;
+      } else {
+        gameActive = false; // End game
+        noLoop();
+      }
     }
   }
+}
+
+// Paddle Class Space
+class spacePaddle {
+  constructor(x) {
+    this.x = x;
+    this.y = height - 40;
+    this.w = 120;
+    this.h = 20;
+    this.originalW = this.w; //store original width
+    this.timer = 0; //timer to track size duration
+  }
+
+  drawSpacePaddle() {
+    this.x = mouseX;
+    noStroke();
+
+    // flying saucer
+    fill(108, 148, 104);
+    ellipse(this.x, this.y, this.w * 1.5, this.h * 1.5);
+
+    // dome
+    fill(200, 204, 200);
+    arc(this.x, this.y - this.h / 4, this.w, this.h, PI, 0, CHORD);
+
+    // details
+    fill(169, 209, 165);
+    rect(this.x - this.w / 2, this.y, this.w, this.h / 4, this.h / 4);
+
+    // lights
+    fill(255, 0, 0); // red light
+    ellipse(this.x - this.w / 3, this.y + this.h / 3, this.h / 2);
+    fill(0, 255, 0); // green light
+    ellipse(this.x, this.y + this.h / 3, this.h / 2);
+
+    //reset size when timer runs out, from chatgpt https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+    if (this.timer > 0) {
+      this.timer--;
+    } else {
+      this.w = this.originalW;
+    }
+  }
+
+  // increaseSize function from https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+  increaseSize(duration) {
+    this.w = this.originalW * 1.5; // increase size
+    this.timer = duration; // set timer
+  }
+
+  hitSpacePaddle(comet) {
+    if (
+      comet.y + comet.r >= this.y &&
+      comet.x > this.x - this.w / 2 &&
+      comet.x < this.x + this.w / 2
+    ) {
+      comet.moveY = comet.moveY * -1;
+    }
+  }
+}
+
+//Brick Class Space
+class spaceBrick {
+  constructor(x, y, w, h, r, isSpecial = false) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.r = r; // gives rounded edges
+    this.isSpecial = isSpecial; //activate special bricks
+  }
+
+  drawAsteroid() {
+    noStroke();
+
+    if (this.isSpecial) {
+      fill(209, 202, 182); //change colour for special bricks
+    } else {
+      fill(112, 106, 89);
+    }
+
+    rect(this.x, this.y, this.w, this.h, this.r);
+    fill(54, 51, 43);
+    ellipse(this.x + this.h / 2, this.y + this.r, this.w / 3, this.h / 2);
+    ellipse(
+      this.x + this.h * 1.5,
+      this.y + this.r * 1.5,
+      this.w / 4,
+      this.h / 3
+    );
+    ellipse(
+      this.x + this.h + this.r / 2,
+      this.y + this.r / 2,
+      this.w / 6,
+      this.h / 4
+    );
+  }
+  // remove brick when colliding with ball
+  collision(comet) {
+    return (
+      comet.x + comet.r > this.x &&
+      comet.x - comet.r < this.x + this.w &&
+      comet.y + comet.r > this.y &&
+      comet.y - comet.r < this.y + this.h
+    );
+  }
+}
+
+// brick grid
+// for (let r = 0; r < rows; r++) {
+//   for (let c = 0; c < cols; c++) {
+//     let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
+//     let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
+//     let isSpecial = Math.random() < 0.08; // 8% chance of being special
+//     bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 20, isSpecial));
+//   }
+// }
+
+// Space Scenery
+function spaceScenery() {
   //planets
   noStroke();
   fill(227, 85, 57);
@@ -770,6 +1240,12 @@ function drawSpaceLevel() {
   circle(520, 425, 3);
   circle(480, 425, 3);
   pop();
+}
+
+comet = new cometBall(400, 500, 20);
+saucer = new spacePaddle(width / 2);
+
+function drawSpaceLevel() {
   background(15, 15, 15);
 
   // blinking stars
@@ -782,10 +1258,10 @@ function drawSpaceLevel() {
 
   spaceScenery();
 
-  // draw brick grid
-  for (let brick of bricks) {
-    brick.drawAsteroid();
-  }
+  // // draw brick grid
+  // for (let brick of bricks) {
+  //   brick.drawAsteroid();
+  // }
 
   // following two explained (backwards iteration) by chatgpt https://chatgpt.com/share/674472ad-afd0-8007-99ef-06fabfa4b8a9
   for (let i = bricks.length - 1; i >= 0; i--) {
@@ -801,9 +1277,6 @@ function drawSpaceLevel() {
     }
   }
 
-  comet.drawComet();
-  comet.moveComet();
-
   // Press B to activate speed Boost
   if (keyIsDown(66)) {
     if (!isBoosting) {
@@ -817,6 +1290,8 @@ function drawSpaceLevel() {
     }
   }
 
+  comet.drawComet();
+  comet.moveComet();
   comet.checkCometBoundaries();
 
   saucer.drawSpacePaddle();
@@ -829,14 +1304,96 @@ function drawSpaceLevel() {
   textAlign(LEFT, TOP);
   text("Score: " + score, 10, 10);
   text("Lives: " + lives, 10, 40);
+
+  // Check if player has lost all lives
+  if (lives <= 0) {
+    gameLost = true;
+  }
+
+  // Check if all bricks have been cleared
+  if (bricks.length === 0) {
+    gameWon = true;
+  }
 }
 
-function drawWinScreen() {}
+//WIN SCREEN
+function drawWinScreen() {
+  // gradient adapted from https://editor.p5js.org/J_Silva/sketches/mJslozHWg
+  for (let y = 1; y < height; y++) {
+    n = map(y, 0, height, 0, 0.4);
+    let newc = lerpColor(c1Win, c2Win, n);
+    stroke(newc);
+    line(0, y, width, y);
+  }
 
-function drawLostScreen() {}
+  // code from Garritt's video example
+  for (let index in starX) {
+    noStroke();
+    fill(255, 255, 255, Math.abs(Math.sin(starAlpha[index])) * 255);
+    ellipse(starX[index], starY[index], 3);
+    starAlpha[index] = starAlpha[index] + 0.05;
+  }
+  //text
+  push();
 
-//game state and mechanics go here
+  textSize(40);
+  fill(66, 148, 52);
+  textFont("Lilita One");
+  text("YOU WIN! CONGRATULATIONS!", width / 2 - 255, height / 2 - 80);
+  stroke(20);
+  pop();
+
+  textSize(20);
+  textFont("Audiowide Regular");
+  fill(255, 255, 255);
+  text("Press Key to Restart", width / 2 - 118, height / 1.8);
+  textSize(15);
+}
+
+//LOST SCREEN
+function drawLostScreen() {
+  // gradient adapted from https://editor.p5js.org/J_Silva/sketches/mJslozHWg
+  for (let y = 1; y < height; y++) {
+    n = map(y, 0, height, 0, 0.4);
+    let newc = lerpColor(c1Lost, c2Lost, n);
+    stroke(newc);
+    line(0, y, width, y);
+  }
+
+  // code from Garritt's video example
+  for (let index in starX) {
+    noStroke();
+    fill(255, 255, 255, Math.abs(Math.sin(starAlpha[index])) * 255);
+    ellipse(starX[index], starY[index], 3);
+    starAlpha[index] = starAlpha[index] + 0.15;
+  }
+
+  //text
+  push();
+  textSize(40);
+  fill(255, 34, 0);
+  textFont("Lilita One");
+  text("YOU LOSE! TRY AGAIN", width / 2 - 180, height / 2 - 80);
+  stroke(20);
+  pop();
+
+  textSize(20);
+  textFont("Audiowide Regular");
+  fill(255, 255, 255);
+  text("Press Key to Restart", width / 2 - 118, height / 1.8);
+  textSize(15);
+}
+
+// DRAW FUNCTION
+
 function draw() {
+  // drawStartScreen();
+  // drawInstructions();
+
+  // drawOceanLevel();
+  // drawJungleLevel();
+  // drawSpaceLevel();
+
   if (gameState === "start") {
     drawStartScreen();
   } else if (gameState === "instructions") {
@@ -851,5 +1408,42 @@ function draw() {
     drawWinScreen();
   } else if (gameState === "lost") {
     drawLostScreen();
+  }
+
+  if (gameLost) {
+    drawLostScreen();
+  } else if (gameWon) {
+    drawWinScreen();
+  }
+}
+// window.draw = draw;
+
+// KEY AND MOUSE FUNCTIONS
+
+function keyPressed() {
+  if (gameState === "start" && key === "i") {
+    gameState = "instructions";
+  }
+
+  if (key === "o") {
+    gameState = "ocean";
+  } else if (key === "j") {
+    gameState = "jungle";
+  } else if (key === "s") {
+    gameState = "space";
+  }
+
+  //add keys to reset game / go back to home screen
+}
+
+function mousePressed() {
+  if (
+    gameState === "instructions" &&
+    mouseX > buttonX &&
+    mouseX < buttonX + buttonW &&
+    mouseY > buttonY &&
+    mouseY < buttonY + buttonH
+  ) {
+    gameState = "start";
   }
 }
