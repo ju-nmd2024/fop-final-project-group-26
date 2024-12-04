@@ -29,6 +29,17 @@ let lives = 3; // Player's lives
 let gameActive = true; // check if the game is active
 let isBoosting = false; // check if boost is active or not
 
+// Reset Game Function
+function resetGame() {
+  gameWon = false;
+  gameLost = false;
+  score = 0; // Reset score
+  lives = 3; // Reset lives to initial state
+  gameActive = true; // Mark the game as active
+  isBoosting = false; // Reset boost status
+  // Reset any additional variables if necessary, e.g., position, enemies, etc.
+}
+
 //Gradient Colours
 let c1 = color(129, 210, 227);
 let c2 = color(71, 116, 125);
@@ -855,6 +866,21 @@ bamboo = new junglePaddle(width / 2);
 comet = new cometBall(400, 500, 20);
 saucer = new spacePaddle(width / 2);
 
+//Check if game is lost or won
+function checkGameStatus() {
+  // Check if player has lost all lives
+  if (lives <= 0) {
+    gameLost = true;
+    drawLostScreen();
+  }
+
+  // Check if all bricks have been cleared
+  if (bricks.length === 0) {
+    gameWon = true;
+    drawWinScreen();
+  }
+}
+
 // OCEAN LEVEL
 
 // Underwater Scenery
@@ -1004,15 +1030,7 @@ function drawOceanLevel() {
   text("Score: " + score, 10, 10);
   text("Lives: " + lives, 10, 40);
 
-  // Check if player has lost all lives
-  if (lives <= 0) {
-    gameLost = true;
-  }
-
-  // Check if all bricks have been cleared
-  if (bricks.length === 0) {
-    gameWon = true;
-  }
+  checkGameStatus();
 }
 
 //JUNGLE LEVEL
@@ -1173,15 +1191,7 @@ function drawJungleLevel() {
   bamboo.drawJunglePaddle();
   bamboo.hitJunglePaddle(coconut);
 
-  // Check if player has lost all lives
-  if (lives <= 0) {
-    gameLost = true;
-  }
-
-  // Check if all bricks have been cleared
-  if (bricks.length === 0) {
-    gameWon = true;
-  }
+  checkGameStatus();
 }
 
 // SPACE LEVEL
@@ -1301,15 +1311,7 @@ function drawSpaceLevel() {
   text("Score: " + score, 10, 10);
   text("Lives: " + lives, 10, 40);
 
-  // Check if player has lost all lives
-  if (lives <= 0) {
-    gameLost = true;
-  }
-
-  // Check if all bricks have been cleared
-  if (bricks.length === 0) {
-    gameWon = true;
-  }
+  checkGameStatus();
 }
 
 //WIN SCREEN
@@ -1383,13 +1385,6 @@ function drawLostScreen() {
 // DRAW FUNCTION
 
 function draw() {
-  // drawStartScreen();
-  // drawInstructions();
-
-  // drawOceanLevel();
-  // drawJungleLevel();
-  // drawSpaceLevel();
-
   if (gameState === "start") {
     drawStartScreen();
   } else if (gameState === "instructions") {
@@ -1405,12 +1400,6 @@ function draw() {
   } else if (gameState === "lost") {
     drawLostScreen();
   }
-
-  if (gameLost) {
-    drawLostScreen();
-  } else if (gameWon) {
-    drawWinScreen();
-  }
 }
 window.draw = draw;
 
@@ -1420,6 +1409,8 @@ function keyPressed() {
   if (gameState === "start" && key === "i") {
     gameState = "instructions";
   }
+
+  // alternate between levels
 
   if (key === "o") {
     gameState = "ocean";
