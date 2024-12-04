@@ -1,7 +1,7 @@
 function setup() {
   createCanvas(800, 600);
 }
-// window.setup = setup;
+window.setup = setup;
 
 // Fish Loop Variables
 let fishX = [160, 180, 200];
@@ -398,9 +398,9 @@ function drawInstructions() {
   pop();
 }
 
-// OCEAN LEVEL
+//CLASSES
 
-// Ball Class Ocean
+//balls
 class pearlBall {
   constructor(x, y, r) {
     this.x = x;
@@ -453,7 +453,113 @@ class pearlBall {
   }
 }
 
-// Paddle Class Ocean
+class cometBall {
+  constructor(x, y, r) {
+    this.x = x;
+    this.y = y;
+    this.r = r;
+    this.moveX = 2;
+    this.moveY = -4;
+  }
+
+  // draw the comet
+  drawComet() {
+    stroke(2, 151, 214);
+    strokeWeight(4);
+    fill(204, 234, 252);
+    circle(this.x, this.y, this.r * 2);
+  }
+
+  // comet movements
+  moveComet() {
+    this.x = this.x + this.moveX;
+    this.y = this.y + this.moveY;
+  }
+
+  // check canvas boundaries
+  checkCometBoundaries() {
+    // Left or right boundary
+    if (this.x - this.r <= 0 || this.x + this.r >= width) {
+      this.moveX *= -1;
+    }
+
+    // Top boundary
+    if (this.y - this.r <= 0) {
+      this.moveY *= -1;
+    }
+
+    // Bottom boundary: Lose life
+    if (this.y - this.r > height) {
+      lives--;
+      if (lives > 0) {
+        // Reset coconut position
+        this.x = width / 2;
+        this.y = height - 100;
+        this.moveX = 2;
+        this.moveY = -4;
+      } else {
+        gameActive = false; // End game
+        noLoop();
+      }
+    }
+  }
+}
+
+class jungleBall {
+  constructor(x, y, r) {
+    this.x = x;
+    this.y = y;
+    this.r = r;
+    this.moveX = 2;
+    this.moveY = -4;
+  }
+
+  // draw the coconut
+  drawCoconut() {
+    stroke(74, 47, 48);
+    strokeWeight(5);
+    fill(196, 172, 157);
+    ellipse(this.x, this.y, this.r * 2);
+    noStroke();
+    fill(255, 255, 255);
+    ellipse(this.x, this.y, this.r * 1.5);
+  }
+
+  // coconut movements
+  moveCoconut() {
+    this.x = this.x + this.moveX;
+    this.y = this.y + this.moveY;
+  }
+
+  checkCoconutBoundaries() {
+    // Left or right boundary
+    if (this.x - this.r <= 0 || this.x + this.r >= width) {
+      this.moveX *= -1;
+    }
+
+    // Top boundary
+    if (this.y - this.r <= 0) {
+      this.moveY *= -1;
+    }
+
+    // Bottom boundary: Lose life
+    if (this.y - this.r > height) {
+      lives--;
+      if (lives > 0) {
+        // Reset coconut position
+        this.x = width / 2;
+        this.y = height - 100;
+        this.moveX = 2;
+        this.moveY = -4;
+      } else {
+        gameActive = false; // End game
+        noLoop();
+      }
+    }
+  }
+}
+
+//paddles
 class shellPaddle {
   constructor(x) {
     this.x = x;
@@ -501,7 +607,158 @@ class shellPaddle {
   }
 }
 
-// Brick Class Ocean
+class junglePaddle {
+  constructor(x) {
+    this.x = x;
+    this.y = height - 70;
+    this.w = 120;
+    this.h = 20;
+    this.originalW = this.w; //store original width
+    this.timer = 0; //timer to track size duration
+  }
+
+  drawJunglePaddle() {
+    this.x = mouseX;
+    // noStroke();
+
+    // paddle
+    fill(230, 216, 62);
+    stroke(230, 156, 30);
+    strokeWeight(2);
+    ellipse(this.x, this.y, this.w * 1.5, this.h * 0.3);
+    ellipse(this.x, this.y + 5, this.w * 1.5, this.h * 0.3);
+    ellipse(this.x, this.y + 10, this.w * 1.5, this.h * 0.3);
+    ellipse(this.x, this.y + 15, this.w * 1.5, this.h * 0.3);
+
+    //reset size when timer runs out, from chatgpt https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+    if (this.timer > 0) {
+      this.timer--;
+    } else {
+      this.w = this.originalW;
+    }
+  }
+
+  // increaseSize function from https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+  increaseSize(duration) {
+    this.w = this.originalW * 1.5; // increase size
+    this.timer = duration; // set timer
+  }
+
+  hitJunglePaddle(coconut) {
+    if (
+      coconut.y + coconut.r >= this.y &&
+      coconut.x > this.x - this.w / 2 &&
+      coconut.x < this.x + this.w / 2
+    ) {
+      coconut.moveY = coconut.moveY * -1;
+    }
+  }
+}
+
+class spacePaddle {
+  constructor(x) {
+    this.x = x;
+    this.y = height - 40;
+    this.w = 120;
+    this.h = 20;
+    this.originalW = this.w; //store original width
+    this.timer = 0; //timer to track size duration
+  }
+
+  drawSpacePaddle() {
+    this.x = mouseX;
+    noStroke();
+
+    // flying saucer
+    fill(108, 148, 104);
+    ellipse(this.x, this.y, this.w * 1.5, this.h * 1.5);
+
+    // dome
+    fill(200, 204, 200);
+    arc(this.x, this.y - this.h / 4, this.w, this.h, PI, 0, CHORD);
+
+    // details
+    fill(169, 209, 165);
+    rect(this.x - this.w / 2, this.y, this.w, this.h / 4, this.h / 4);
+
+    // lights
+    fill(255, 0, 0); // red light
+    ellipse(this.x - this.w / 3, this.y + this.h / 3, this.h / 2);
+    fill(0, 255, 0); // green light
+    ellipse(this.x, this.y + this.h / 3, this.h / 2);
+
+    //reset size when timer runs out, from chatgpt https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+    if (this.timer > 0) {
+      this.timer--;
+    } else {
+      this.w = this.originalW;
+    }
+  }
+
+  // increaseSize function from https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+  increaseSize(duration) {
+    this.w = this.originalW * 1.5; // increase size
+    this.timer = duration; // set timer
+  }
+
+  hitSpacePaddle(comet) {
+    if (
+      comet.y + comet.r >= this.y &&
+      comet.x > this.x - this.w / 2 &&
+      comet.x < this.x + this.w / 2
+    ) {
+      comet.moveY = comet.moveY * -1;
+    }
+  }
+}
+
+//bricks
+class spaceBrick {
+  constructor(x, y, w, h, r, isSpecial = false) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.r = r; // gives rounded edges
+    this.isSpecial = isSpecial; //activate special bricks
+  }
+
+  drawAsteroid() {
+    noStroke();
+
+    if (this.isSpecial) {
+      fill(209, 202, 182); //change colour for special bricks
+    } else {
+      fill(112, 106, 89);
+    }
+
+    rect(this.x, this.y, this.w, this.h, this.r);
+    fill(54, 51, 43);
+    ellipse(this.x + this.h / 2, this.y + this.r, this.w / 3, this.h / 2);
+    ellipse(
+      this.x + this.h * 1.5,
+      this.y + this.r * 1.5,
+      this.w / 4,
+      this.h / 3
+    );
+    ellipse(
+      this.x + this.h + this.r / 2,
+      this.y + this.r / 2,
+      this.w / 6,
+      this.h / 4
+    );
+  }
+  // remove brick when colliding with ball
+  collision(comet) {
+    return (
+      comet.x + comet.r > this.x &&
+      comet.x - comet.r < this.x + this.w &&
+      comet.y + comet.r > this.y &&
+      comet.y - comet.r < this.y + this.h
+    );
+  }
+}
+
 class chestBrick {
   constructor(x, y, w, h, r, isSpecial = false) {
     this.x = x;
@@ -538,15 +795,67 @@ class chestBrick {
   }
 }
 
+class jungleBrick {
+  constructor(x, y, w, h, r, isSpecial = false) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.r = r;
+    this.isSpecial = isSpecial; //activate special bricks
+  }
+
+  drawStones() {
+    noStroke();
+
+    if (this.isSpecial) {
+      fill(171, 173, 158); //change colour for special bricks
+    } else {
+      fill(108, 110, 94);
+    }
+    rect(this.x, this.y, this.w, this.h, this.r);
+    fill(133, 135, 116);
+    rect(this.x + this.h / 4, this.y + this.r, this.w / 3, this.h / 4);
+    rect(this.x + this.h * 1, this.y + this.r * 3.4, this.w / 3, this.h / 6);
+    rect(
+      this.x + this.h + this.r / 4,
+      this.y + this.r / 3,
+      this.w / 4,
+      this.h / 7
+    );
+  }
+  // remove brick when colliding with ball
+  collision(coconut) {
+    if (
+      coconut.x + coconut.r > this.x &&
+      coconut.x - coconut.r < this.x + this.w &&
+      coconut.y + coconut.r > this.y &&
+      coconut.y - coconut.r < this.y + this.h
+    ) {
+      coconut.moveY = coconut.moveY * -1;
+    }
+  }
+}
+
 // brick grid
 for (let r = 0; r < rows; r++) {
   for (let c = 0; c < cols; c++) {
     let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
     let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
     let isSpecial = Math.random() < 0.08; // 8% chance of being special
-    bricks.push(new chestBrick(x, y, brickWidth, brickHeight, 15, isSpecial));
+    bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 15, isSpecial));
   }
 }
+
+// call classes
+pearl = new pearlBall(400, 500, 20);
+shell = new shellPaddle(width / 2);
+coconut = new jungleBall(400, 500, 20);
+bamboo = new junglePaddle(width / 2);
+comet = new cometBall(400, 500, 20);
+saucer = new spacePaddle(width / 2);
+
+// OCEAN LEVEL
 
 // Underwater Scenery
 function oceanScenery() {
@@ -645,14 +954,11 @@ function oceanScenery() {
   arc(620, 565, 30, 30, PI, 0, CHORD);
 }
 
-pearl = new pearlBall(400, 500, 20);
-shell = new shellPaddle(width / 2);
-
 function drawOceanLevel() {
   oceanScenery();
 
   for (let brick of bricks) {
-    brick.drawChest();
+    brick.drawAsteroid();
   }
 
   // for loop explained (backwards iteration) by chatgpt https://chatgpt.com/share/674472ad-afd0-8007-99ef-06fabfa4b8a9
@@ -711,152 +1017,6 @@ function drawOceanLevel() {
 
 //JUNGLE LEVEL
 
-// Ball Class Jungle
-class jungleBall {
-  constructor(x, y, r) {
-    this.x = x;
-    this.y = y;
-    this.r = r;
-    this.moveX = 2;
-    this.moveY = -4;
-  }
-
-  // draw the coconut
-  drawCoconut() {
-    stroke(74, 47, 48);
-    strokeWeight(5);
-    fill(196, 172, 157);
-    ellipse(this.x, this.y, this.r * 2);
-    noStroke();
-    fill(255, 255, 255);
-    ellipse(this.x, this.y, this.r * 1.5);
-  }
-
-  // coconut movements
-  moveCoconut() {
-    this.x = this.x + this.moveX;
-    this.y = this.y + this.moveY;
-  }
-
-  checkCoconutBoundaries() {
-    // Left or right boundary
-    if (this.x - this.r <= 0 || this.x + this.r >= width) {
-      this.moveX *= -1;
-    }
-
-    // Top boundary
-    if (this.y - this.r <= 0) {
-      this.moveY *= -1;
-    }
-
-    // Bottom boundary: Lose life
-    if (this.y - this.r > height) {
-      lives--;
-      if (lives > 0) {
-        // Reset coconut position
-        this.x = width / 2;
-        this.y = height - 100;
-        this.moveX = 2;
-        this.moveY = -4;
-      } else {
-        gameActive = false; // End game
-        noLoop();
-      }
-    }
-  }
-}
-
-// Paddle Class Jungle
-class junglePaddle {
-  constructor(x) {
-    this.x = x;
-    this.y = height - 70;
-    this.w = 120;
-    this.h = 20;
-    this.originalW = this.w; //store original width
-    this.timer = 0; //timer to track size duration
-  }
-
-  drawJunglePaddle() {
-    this.x = mouseX;
-    // noStroke();
-
-    // paddle
-    fill(230, 216, 62);
-    stroke(230, 156, 30);
-    strokeWeight(2);
-    ellipse(this.x, this.y, this.w * 1.5, this.h * 0.3);
-    ellipse(this.x, this.y + 5, this.w * 1.5, this.h * 0.3);
-    ellipse(this.x, this.y + 10, this.w * 1.5, this.h * 0.3);
-    ellipse(this.x, this.y + 15, this.w * 1.5, this.h * 0.3);
-
-    //reset size when timer runs out, from chatgpt https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
-    if (this.timer > 0) {
-      this.timer--;
-    } else {
-      this.w = this.originalW;
-    }
-  }
-
-  // increaseSize function from https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
-  increaseSize(duration) {
-    this.w = this.originalW * 1.5; // increase size
-    this.timer = duration; // set timer
-  }
-
-  hitJunglePaddle(coconut) {
-    if (
-      coconut.y + coconut.r >= this.y &&
-      coconut.x > this.x - this.w / 2 &&
-      coconut.x < this.x + this.w / 2
-    ) {
-      coconut.moveY = coconut.moveY * -1;
-    }
-  }
-}
-
-// Brick Class Jungle
-class jungleBrick {
-  constructor(x, y, w, h, r, isSpecial = false) {
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-    this.r = r;
-    this.isSpecial = isSpecial; //activate special bricks
-  }
-
-  drawStones() {
-    noStroke();
-
-    if (this.isSpecial) {
-      fill(171, 173, 158); //change colour for special bricks
-    } else {
-      fill(108, 110, 94);
-    }
-    rect(this.x, this.y, this.w, this.h, this.r);
-    fill(133, 135, 116);
-    rect(this.x + this.h / 4, this.y + this.r, this.w / 3, this.h / 4);
-    rect(this.x + this.h * 1, this.y + this.r * 3.4, this.w / 3, this.h / 6);
-    rect(
-      this.x + this.h + this.r / 4,
-      this.y + this.r / 3,
-      this.w / 4,
-      this.h / 7
-    );
-  }
-  // remove brick when colliding with ball
-  collision(coconut) {
-    if (
-      coconut.x + coconut.r > this.x &&
-      coconut.x - coconut.r < this.x + this.w &&
-      coconut.y + coconut.r > this.y &&
-      coconut.y - coconut.r < this.y + this.h
-    ) {
-      coconut.moveY = coconut.moveY * -1;
-    }
-  }
-}
 // Jungle Scenery
 function jungleScenery() {
   background(196, 212, 133);
@@ -944,9 +1104,6 @@ function jungleScenery() {
   pop();
 }
 
-coconut = new jungleBall(400, 500, 20);
-bamboo = new junglePaddle(width / 2);
-
 // // brick grid
 // for (let r = 0; r < rows; r++) {
 //   for (let c = 0; c < cols; c++) {
@@ -961,7 +1118,7 @@ function drawJungleLevel() {
   jungleScenery();
 
   for (let brick of bricks) {
-    // brick.drawStones();
+    brick.drawAsteroid();
   }
 
   // Iterate over bricks and check for collisions
@@ -1029,164 +1186,6 @@ function drawJungleLevel() {
 
 // SPACE LEVEL
 
-// Ball Class Space
-class cometBall {
-  constructor(x, y, r) {
-    this.x = x;
-    this.y = y;
-    this.r = r;
-    this.moveX = 2;
-    this.moveY = -4;
-  }
-
-  // draw the comet
-  drawComet() {
-    stroke(2, 151, 214);
-    strokeWeight(4);
-    fill(204, 234, 252);
-    circle(this.x, this.y, this.r * 2);
-  }
-
-  // comet movements
-  moveComet() {
-    this.x = this.x + this.moveX;
-    this.y = this.y + this.moveY;
-  }
-
-  // check canvas boundaries
-  checkCometBoundaries() {
-    // Left or right boundary
-    if (this.x - this.r <= 0 || this.x + this.r >= width) {
-      this.moveX *= -1;
-    }
-
-    // Top boundary
-    if (this.y - this.r <= 0) {
-      this.moveY *= -1;
-    }
-
-    // Bottom boundary: Lose life
-    if (this.y - this.r > height) {
-      lives--;
-      if (lives > 0) {
-        // Reset coconut position
-        this.x = width / 2;
-        this.y = height - 100;
-        this.moveX = 2;
-        this.moveY = -4;
-      } else {
-        gameActive = false; // End game
-        noLoop();
-      }
-    }
-  }
-}
-
-// Paddle Class Space
-class spacePaddle {
-  constructor(x) {
-    this.x = x;
-    this.y = height - 40;
-    this.w = 120;
-    this.h = 20;
-    this.originalW = this.w; //store original width
-    this.timer = 0; //timer to track size duration
-  }
-
-  drawSpacePaddle() {
-    this.x = mouseX;
-    noStroke();
-
-    // flying saucer
-    fill(108, 148, 104);
-    ellipse(this.x, this.y, this.w * 1.5, this.h * 1.5);
-
-    // dome
-    fill(200, 204, 200);
-    arc(this.x, this.y - this.h / 4, this.w, this.h, PI, 0, CHORD);
-
-    // details
-    fill(169, 209, 165);
-    rect(this.x - this.w / 2, this.y, this.w, this.h / 4, this.h / 4);
-
-    // lights
-    fill(255, 0, 0); // red light
-    ellipse(this.x - this.w / 3, this.y + this.h / 3, this.h / 2);
-    fill(0, 255, 0); // green light
-    ellipse(this.x, this.y + this.h / 3, this.h / 2);
-
-    //reset size when timer runs out, from chatgpt https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
-    if (this.timer > 0) {
-      this.timer--;
-    } else {
-      this.w = this.originalW;
-    }
-  }
-
-  // increaseSize function from https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
-  increaseSize(duration) {
-    this.w = this.originalW * 1.5; // increase size
-    this.timer = duration; // set timer
-  }
-
-  hitSpacePaddle(comet) {
-    if (
-      comet.y + comet.r >= this.y &&
-      comet.x > this.x - this.w / 2 &&
-      comet.x < this.x + this.w / 2
-    ) {
-      comet.moveY = comet.moveY * -1;
-    }
-  }
-}
-
-//Brick Class Space
-class spaceBrick {
-  constructor(x, y, w, h, r, isSpecial = false) {
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-    this.r = r; // gives rounded edges
-    this.isSpecial = isSpecial; //activate special bricks
-  }
-
-  drawAsteroid() {
-    noStroke();
-
-    if (this.isSpecial) {
-      fill(209, 202, 182); //change colour for special bricks
-    } else {
-      fill(112, 106, 89);
-    }
-
-    rect(this.x, this.y, this.w, this.h, this.r);
-    fill(54, 51, 43);
-    ellipse(this.x + this.h / 2, this.y + this.r, this.w / 3, this.h / 2);
-    ellipse(
-      this.x + this.h * 1.5,
-      this.y + this.r * 1.5,
-      this.w / 4,
-      this.h / 3
-    );
-    ellipse(
-      this.x + this.h + this.r / 2,
-      this.y + this.r / 2,
-      this.w / 6,
-      this.h / 4
-    );
-  }
-  // remove brick when colliding with ball
-  collision(comet) {
-    return (
-      comet.x + comet.r > this.x &&
-      comet.x - comet.r < this.x + this.w &&
-      comet.y + comet.r > this.y &&
-      comet.y - comet.r < this.y + this.h
-    );
-  }
-}
-
 // brick grid
 // for (let r = 0; r < rows; r++) {
 //   for (let c = 0; c < cols; c++) {
@@ -1242,9 +1241,6 @@ function spaceScenery() {
   pop();
 }
 
-comet = new cometBall(400, 500, 20);
-saucer = new spacePaddle(width / 2);
-
 function drawSpaceLevel() {
   background(15, 15, 15);
 
@@ -1258,10 +1254,10 @@ function drawSpaceLevel() {
 
   spaceScenery();
 
-  // // draw brick grid
-  // for (let brick of bricks) {
-  //   brick.drawAsteroid();
-  // }
+  // draw brick grid
+  for (let brick of bricks) {
+    brick.drawAsteroid();
+  }
 
   // following two explained (backwards iteration) by chatgpt https://chatgpt.com/share/674472ad-afd0-8007-99ef-06fabfa4b8a9
   for (let i = bricks.length - 1; i >= 0; i--) {
@@ -1346,7 +1342,7 @@ function drawWinScreen() {
   textSize(20);
   textFont("Audiowide Regular");
   fill(255, 255, 255);
-  text("Press Key to Restart", width / 2 - 118, height / 1.8);
+  text("Press Enter Key to Restart", width / 2 - 118, height / 1.8);
   textSize(15);
 }
 
@@ -1380,7 +1376,7 @@ function drawLostScreen() {
   textSize(20);
   textFont("Audiowide Regular");
   fill(255, 255, 255);
-  text("Press Key to Restart", width / 2 - 118, height / 1.8);
+  text("Press Enter Key to Restart", width / 2 - 118, height / 1.8);
   textSize(15);
 }
 
@@ -1416,7 +1412,7 @@ function draw() {
     drawWinScreen();
   }
 }
-// window.draw = draw;
+window.draw = draw;
 
 // KEY AND MOUSE FUNCTIONS
 
