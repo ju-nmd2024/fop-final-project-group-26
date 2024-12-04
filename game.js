@@ -577,14 +577,39 @@ class shellPaddle {
     this.y = height - 40;
     this.w = 120;
     this.h = 20;
-    this.originalW = this.w; //store original width
-    this.timer = 0; //timer to track size duration
+    this.originalW = this.w;
+    this.timer = 0; 
+
+     // Movement mode properties
+     this.oppositeMovement = false; 
+     this.lastMouseX = mouseX; 
+ 
+     // Timer properties
+     this.switchInterval = 500; // around 10 seconds 
   }
 
   drawShellPaddle() {
-    this.x = mouseX;
-    noStroke();
 
+    // Switch movement mode every 10 seconds, gron chatgpt lines 583-601 https://chatgpt.com/share/6750afc6-c27c-8005-9683-7081d310cac0
+    if (frameCount % this.switchInterval === 0) {
+      this.oppositeMovement = !this.oppositeMovement;
+    }
+  
+    // Movement logic
+    if (this.oppositeMovement) {
+      // Calculate opposite direction movement
+      let mouseDelta = mouseX - this.lastMouseX;
+      this.x -= mouseDelta;
+    } else {
+      // Follow the mouse normally
+      this.x = mouseX;
+    }
+  
+    // Update last known mouse position
+    this.lastMouseX = mouseX;
+  
+    // Keep paddle within bounds
+    this.x = constrain(this.x, this.w / 2, width - this.w / 2);
     // clam shell
     stroke(137, 94, 166);
     strokeWeight(2.5);
@@ -616,6 +641,13 @@ class shellPaddle {
       shell.moveY = shell.moveY * -1;
     }
   }
+  triggerRandomMovement() { //from chatgpt 633-639 https://chatgpt.com/share/6750afc6-c27c-8005-9683-7081d310cac0
+    this.randomMovement = true;
+    this.randomTimer = this.randomDuration;
+    this.randomDirection = createVector(
+      random(-3, 3) // random horizontal speed
+    );
+  }
 }
 
 class junglePaddle {
@@ -626,11 +658,36 @@ class junglePaddle {
     this.h = 20;
     this.originalW = this.w; //store original width
     this.timer = 0; //timer to track size duration
+
+     // Movement mode properties
+     this.oppositeMovement = false; // flag for opposite movement
+     this.lastMouseX = mouseX; // track last mouse position
+ 
+     // Timer properties
+     this.switchInterval = 500; // 10 seconds in frames 
   }
 
   drawJunglePaddle() {
+       // Switch movement mode every 10 seconds // from chatgpt lines 661-671 https://chatgpt.com/share/6750afc6-c27c-8005-9683-7081d310cac0
+   if (frameCount % this.switchInterval === 0) {
+    this.oppositeMovement = !this.oppositeMovement;
+  }
+
+  // Movement logic
+  if (this.oppositeMovement) {
+    // Calculate opposite direction movement
+    let mouseDelta = mouseX - this.lastMouseX;
+    this.x -= mouseDelta;
+  } else {
+    // Follow the mouse normally
     this.x = mouseX;
-    // noStroke();
+  }
+
+  // Update last known mouse position
+  this.lastMouseX = mouseX;
+
+  // Keep paddle within bounds
+  this.x = constrain(this.x, this.w / 2, width - this.w / 2);
 
     // paddle
     fill(230, 216, 62);
@@ -649,7 +706,7 @@ class junglePaddle {
     }
   }
 
-  // increaseSize function from https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
+  // increaseSize function, from chatgpt https://chatgpt.com/share/67489f6e-6e70-8007-b3e9-f633edbcd5e9
   increaseSize(duration) {
     this.w = this.originalW * 1.5; // increase size
     this.timer = duration; // set timer
@@ -664,6 +721,13 @@ class junglePaddle {
       coconut.moveY = coconut.moveY * -1;
     }
   }
+  triggerRandomMovement() {
+    this.randomMovement = true;
+    this.randomTimer = this.randomDuration;
+    this.randomDirection = createVector(
+      random(-3, 3) // random horizontal speed
+    );
+  }
 }
 
 class spacePaddle {
@@ -674,10 +738,40 @@ class spacePaddle {
     this.h = 20;
     this.originalW = this.w; //store original width
     this.timer = 0; //timer to track size duration
+
+     // Movement mode properties
+     this.oppositeMovement = false; // flag for opposite movement
+     this.lastMouseX = mouseX; // track last mouse position
+ 
+     // Timer properties
+     this.switchInterval = 500; 
   }
 
   drawSpacePaddle() {
+
+   // Switch movement mode every 10 seconds
+   if (frameCount % this.switchInterval === 0) {
+    this.oppositeMovement = !this.oppositeMovement;
+  }
+
+  // Movement logic
+  if (this.oppositeMovement) {
+    // Calculate opposite direction movement
+    let mouseDelta = mouseX - this.lastMouseX;
+    this.x -= mouseDelta;
+  } else {
+    // Follow the mouse normally
     this.x = mouseX;
+  }
+
+  // Update last known mouse position
+  this.lastMouseX = mouseX;
+
+  // Keep paddle within bounds
+  this.x = constrain(this.x, this.w / 2, width - this.w / 2);
+   
+    
+    
     noStroke();
 
     // flying saucer
@@ -720,6 +814,14 @@ class spacePaddle {
     ) {
       comet.moveY = comet.moveY * -1;
     }
+  }
+
+  triggerRandomMovement() {
+    this.randomMovement = true;
+    this.randomTimer = this.randomDuration;
+    this.randomDirection = createVector(
+      random(-3, 3) // random horizontal speed
+    );
   }
 }
 
