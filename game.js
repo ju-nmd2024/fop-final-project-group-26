@@ -30,15 +30,21 @@ let gameActive = true; // check if the game is active
 let isBoosting = false; // check if boost is active or not
 
 // Reset Game Function
-function resetGame() {
-  gameWon = false;
-  gameLost = false;
-  score = 0; // Reset score
-  lives = 3; // Reset lives to initial state
-  gameActive = true; // Mark the game as active
-  isBoosting = false; // Reset boost status
-  // Reset any additional variables if necessary, e.g., position, enemies, etc.
-}
+// function resetGame() {
+  // gameWon = false;
+  // gameLost = false;
+  // score = 0; // Reset score
+  // lives = 3; // Reset lives to initial state
+  // gameActive = true; // Mark the game as active
+  // isBoosting = false; // Reset boost status
+  // gameState = "playing";
+
+  // this.x = width / 2; //ball position
+  //       this.y = height - 100;
+  //       this.moveX = 2;
+  //       this.moveY = -4;
+
+// }
 
 //Gradient Colours
 let c1 = color(129, 210, 227);
@@ -458,7 +464,7 @@ class pearlBall {
         this.moveY = -4;
       } else {
         gameActive = false; // End game
-        noLoop();
+        
       }
     }
   }
@@ -510,7 +516,7 @@ class cometBall {
         this.moveY = -4;
       } else {
         gameActive = false; // End game
-        noLoop();
+       
       }
     }
   }
@@ -564,7 +570,7 @@ class jungleBall {
         this.moveY = -4;
       } else {
         gameActive = false; // End game
-        noLoop();
+       
       }
     }
   }
@@ -1448,6 +1454,9 @@ function drawWinScreen() {
   fill(255, 255, 255);
   text("Press Enter Key to Restart", width / 2 - 118, height / 1.8);
   textSize(15);
+  if (keyIsPressed && key === "13"){
+    resetGame();
+  }
 }
 
 //LOST SCREEN
@@ -1482,9 +1491,34 @@ function drawLostScreen() {
   fill(255, 255, 255);
   text("Press Enter Key to Restart", width / 2 - 118, height / 1.8);
   textSize(15);
+  
+   if (keyIsDown(13)){
+    resetGame();
+}
 }
 
-// DRAW FUNCTION
+//reset game
+function resetGame() {
+
+  gameState = "start";
+  gameWon = false;
+  gameLost = false;
+  score = 0; // Reset score
+  lives = 3; // Reset lives to initial state
+  gameActive = true; // Mark the game as active
+  isBoosting = false; // Reset boost status
+
+  this.x = width / 2; //ball position
+        this.y = height - 100;
+        this.moveX = 2;
+        this.moveY = -4;
+        gameWon = false;
+        gameLost = false;
+
+}
+
+
+// DRAW FUNCTION LOOP
 
 function draw() {
   if (gameState === "start") {
@@ -1523,6 +1557,11 @@ function keyPressed() {
   }
 
   //add keys to reset game / go back to home screen
+  if ( gameState === "win" && keyIsDown(13)) {
+    gameState = "start";
+  } else if ( gameState === "lost" && keyIsDown(13)){
+    gameState = "start";
+  }
 }
 
 function mousePressed() {
