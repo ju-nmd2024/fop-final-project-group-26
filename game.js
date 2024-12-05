@@ -9,6 +9,12 @@ function setup() {
   c2Lost = color(125, 0, 0);
 }
 
+function preload() {
+  resultFont = loadFont("./fonts/LilitaOne-Regular.ttf");
+  startFont = loadFont("./fonts/Audiowide-Regular.ttf");
+  tintFont = loadFont("./fonts/BungeeTint-Regular.ttf");
+}
+
 // Fish Loop Variables
 let fishX = [160, 180, 200];
 let fishY = [400, 435, 465];
@@ -280,18 +286,19 @@ function drawStartScreen() {
 
   pop();
   push();
-  textSize(40);
-  textFont("Bungee Tint Regular");
-  text("BREAKOUT GAME", canvasWidth / 2 - 190, canvasHeight / 2 - 80);
+  fill(255, 0, 0);
+  textSize(50);
+  textFont(tintFont);
+  text("BREAKOUT GAME", canvasWidth / 2 - 210, canvasHeight / 2 - 40);
   stroke(20);
   pop();
 
-  textSize(20);
-  textFont("Audiowide Regular");
+  textSize(25);
+  textFont(startFont);
   fill(255, 255, 255);
   text(
     "Press the i Key to Read Instructions",
-    canvasWidth / 2 - 150,
+    canvasWidth / 2 - 250,
     canvasHeight / 1.8
   );
 }
@@ -301,6 +308,7 @@ function drawInstructions() {
   background(202, 219, 208);
 
   //how to play
+  textFont(tintFont);
   stroke(80, 94, 85);
   strokeWeight(3);
   fill(240, 245, 242);
@@ -314,18 +322,24 @@ function drawInstructions() {
   //key square
   push();
   fill(240, 245, 242);
-  rect(480, 250, 200, 125, 20);
+  rect(479, 250, 200, 125, 20);
 
   pop();
 
   //subheadings
+  push();
+  textFont("Arial");
   text("1. Start the Game", 50, 70);
   text("2. Control the Paddle", 50, 140);
   text("3. Destroy the Bricks", 50, 210);
   text("4. Avoid Losing the Ball", 50, 280);
   text("5. Boost", 50, 350);
   text("6. Score", 50, 440);
-  text("KEYS", 550, 280);
+
+  push();
+  textFont(tintFont);
+  text("KEYS", 545, 280);
+  pop();
 
   //instructions
   textSize(18);
@@ -363,6 +377,7 @@ function drawInstructions() {
   text("press o for ocean level", 490, 305);
   text("press j for jungle level", 490, 330);
   text("press s for space level", 490, 355);
+  pop();
 
   //home button
 
@@ -1133,7 +1148,7 @@ function drawOceanLevel() {
   // Display score and lives
   textSize(24);
   noStroke();
-  textFont("Audiowide Regular");
+  textFont(startFont);
   fill(255, 227, 234);
   textAlign(LEFT, TOP);
   text("Score: " + score, 10, 10);
@@ -1231,16 +1246,6 @@ function jungleScenery() {
   pop();
 }
 
-// // brick grid
-// for (let r = 0; r < rows; r++) {
-//   for (let c = 0; c < cols; c++) {
-//     let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
-//     let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-//     let isSpecial = Math.random() < 0.08; // 8% chance of being special
-//     bricks.push(new jungleBrick(x, y, brickWidth, brickHeight, 10, isSpecial));
-//   }
-// }
-
 function drawJungleLevel() {
   jungleScenery();
 
@@ -1286,7 +1291,7 @@ function drawJungleLevel() {
 
   // Display score and lives
   textSize(24);
-  textFont("Audiowide Regular");
+  textFont(startFont);
   fill(255, 227, 234);
   textAlign(LEFT, TOP);
   text("Score: " + score, 10, 10);
@@ -1304,16 +1309,6 @@ function drawJungleLevel() {
 }
 
 // SPACE LEVEL
-
-// brick grid
-// for (let r = 0; r < rows; r++) {
-//   for (let c = 0; c < cols; c++) {
-//     let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
-//     let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
-//     let isSpecial = Math.random() < 0.08; // 8% chance of being special
-//     bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 20, isSpecial));
-//   }
-// }
 
 // Space Scenery
 function spaceScenery() {
@@ -1414,7 +1409,7 @@ function drawSpaceLevel() {
 
   // Display score and lives
   textSize(24);
-  textFont("Audiowide Regular");
+  textFont(startFont);
   fill(255, 227, 234);
   textAlign(LEFT, TOP);
   text("Score: " + score, 10, 10);
@@ -1445,22 +1440,26 @@ function drawWinScreen() {
 
   textSize(40);
   fill(66, 148, 52);
-  textFont("Lilita One");
+  textFont(resultFont);
   text(
     "YOU WIN! CONGRATULATIONS!",
     canvasWidth / 2 - 255,
-    canvasHeight / 2 - 80
+    canvasHeight / 2 - 60
   );
   stroke(20);
   pop();
 
   textSize(20);
-  textFont("Audiowide Regular");
+  textFont(startFont);
   fill(255, 255, 255);
-  text("Press Enter Key to Restart", canvasWidth / 2 - 118, canvasHeight / 1.8);
+  text("Press Enter Key to Restart", canvasWidth / 2 - 133, canvasHeight / 1.8);
   textSize(15);
 
-  gameWon = true;
+  if (keyIsDown(13)) {
+    resetGame();
+  }
+
+  // gameWon = true;
 }
 
 //LOST SCREEN
@@ -1485,21 +1484,22 @@ function drawLostScreen() {
   push();
   textSize(40);
   fill(255, 34, 0);
-  textFont("Lilita One");
-  text("YOU LOSE! TRY AGAIN", canvasWidth / 2 - 180, canvasHeight / 2 - 80);
+  textFont(resultFont);
+  text("YOU LOSE! TRY AGAIN", canvasWidth / 2 - 180, canvasHeight / 2 - 50);
   stroke(20);
   pop();
 
   textSize(20);
-  textFont("Audiowide Regular");
+  textFont(startFont);
   fill(255, 255, 255);
-  text("Press Enter Key to Restart", canvasWidth / 2 - 118, canvasHeight / 1.8);
+  text("Press Enter Key to Restart", canvasWidth / 2 - 135, canvasHeight / 1.8);
   textSize(15);
 
-  gameLost = true;
+  if (keyIsDown(13)) {
+    resetGame();
+  }
 }
 
-//reset game
 function resetGame() {
   gameState = "start";
   gameWon = false;
@@ -1509,12 +1509,22 @@ function resetGame() {
   gameActive = true; // Mark the game as active
   isBoosting = false; // Reset boost status
 
-  this.x = width / 2; //ball position
-  this.y = height - 100;
+  this.x = canvasWidth / 2; //ball position
+  this.y = canvasHeight - 100;
   this.moveX = 2;
   this.moveY = -4;
   gameWon = false;
   gameLost = false;
+
+  bricks = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
+      let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
+      let isSpecial = Math.random() < 0.08; // 8% chance of being special
+      bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 15, isSpecial));
+    }
+  }
 }
 
 // DRAW FUNCTION LOOP
@@ -1536,7 +1546,6 @@ function draw() {
     drawLostScreen();
   }
 }
-// window.draw = draw;
 
 // KEY AND MOUSE FUNCTIONS
 
@@ -1555,8 +1564,9 @@ function keyPressed() {
     gameState = "space";
   }
 
-  if ((gameState === "win" || gameState === "lost") && key === "Enter") {
-    resetGame();
+  if (gameState === "win" && keyIsDown(13)) {
+    gameState = "start";
+  } else if (gameState === "lost" && keyIsDown(13)) {
     gameState = "start";
   }
 }
