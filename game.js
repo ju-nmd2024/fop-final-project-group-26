@@ -440,7 +440,7 @@ function drawInstructions() {
 //CLASSES
 
 //balls
-class pearlBall {
+class PearlBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
@@ -491,7 +491,7 @@ class pearlBall {
   }
 }
 
-class cometBall {
+class CometBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
@@ -542,7 +542,7 @@ class cometBall {
   }
 }
 
-class jungleBall {
+class JungleBall {
   constructor(x, y, r) {
     this.x = x;
     this.y = y;
@@ -596,7 +596,7 @@ class jungleBall {
 }
 
 //paddles
-class shellPaddle {
+class ShellPaddle {
   constructor(x) {
     this.x = x;
     this.y = canvasHeight - 40;
@@ -675,7 +675,7 @@ class shellPaddle {
   }
 }
 
-class junglePaddle {
+class JunglePaddle {
   constructor(x) {
     this.x = x;
     this.y = canvasHeight - 70;
@@ -755,7 +755,7 @@ class junglePaddle {
   }
 }
 
-class spacePaddle {
+class SpacePaddle {
   constructor(x) {
     this.x = x;
     this.y = canvasHeight - 40;
@@ -848,7 +848,7 @@ class spacePaddle {
 }
 
 //bricks
-class spaceBrick {
+class SpaceBrick {
   constructor(x, y, w, h, r, isSpecial = false) {
     this.x = x;
     this.y = y;
@@ -894,83 +894,83 @@ class spaceBrick {
   }
 }
 
-class chestBrick {
-  constructor(x, y, w, h, r, isSpecial = false) {
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-    this.r = r; // gives rounded edges
-    this.isSpecial = isSpecial; //activate special bricks
-  }
+// class chestBrick {
+//   constructor(x, y, w, h, r, isSpecial = false) {
+//     this.x = x;
+//     this.y = y;
+//     this.w = w;
+//     this.h = h;
+//     this.r = r; // gives rounded edges
+//     this.isSpecial = isSpecial; //activate special bricks
+//   }
 
-  drawChest() {
-    noStroke();
+//   drawChest() {
+//     noStroke();
 
-    if (this.isSpecial) {
-      fill(138, 106, 69); //change colour for special bricks
-    } else {
-      fill(46, 30, 1);
-    }
+//     if (this.isSpecial) {
+//       fill(138, 106, 69); //change colour for special bricks
+//     } else {
+//       fill(46, 30, 1);
+//     }
 
-    rect(this.x, this.y, this.w, this.h, this.r, this.r, 0);
-    fill(77, 58, 24);
-    rect(this.x, this.y + this.r, this.w, this.h / 5);
-    fill(199, 144, 42);
-    rect(this.x + 40, this.y + this.r, this.w / 5, this.h / 4);
-  }
-  // remove brick when colliding with ball
-  collision(pearl) {
-    return (
-      pearl.x + pearl.r > this.x &&
-      pearl.x - pearl.r < this.x + this.w &&
-      pearl.y + pearl.r > this.y &&
-      pearl.y - pearl.r < this.y + this.h
-    );
-  }
-}
+//     rect(this.x, this.y, this.w, this.h, this.r, this.r, 0);
+//     fill(77, 58, 24);
+//     rect(this.x, this.y + this.r, this.w, this.h / 5);
+//     fill(199, 144, 42);
+//     rect(this.x + 40, this.y + this.r, this.w / 5, this.h / 4);
+//   }
+//   // remove brick when colliding with ball
+//   collision(pearl) {
+//     return (
+//       pearl.x + pearl.r > this.x &&
+//       pearl.x - pearl.r < this.x + this.w &&
+//       pearl.y + pearl.r > this.y &&
+//       pearl.y - pearl.r < this.y + this.h
+//     );
+//   }
+// }
 
-class jungleBrick {
-  constructor(x, y, w, h, r, isSpecial = false) {
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
-    this.r = r;
-    this.isSpecial = isSpecial; //activate special bricks
-  }
+// class jungleBrick {
+//   constructor(x, y, w, h, r, isSpecial = false) {
+//     this.x = x;
+//     this.y = y;
+//     this.w = w;
+//     this.h = h;
+//     this.r = r;
+//     this.isSpecial = isSpecial; //activate special bricks
+//   }
 
-  drawStones() {
-    noStroke();
+//   drawStones() {
+//     noStroke();
 
-    if (this.isSpecial) {
-      fill(171, 173, 158); //change colour for special bricks
-    } else {
-      fill(108, 110, 94);
-    }
-    rect(this.x, this.y, this.w, this.h, this.r);
-    fill(133, 135, 116);
-    rect(this.x + this.h / 4, this.y + this.r, this.w / 3, this.h / 4);
-    rect(this.x + this.h * 1, this.y + this.r * 3.4, this.w / 3, this.h / 6);
-    rect(
-      this.x + this.h + this.r / 4,
-      this.y + this.r / 3,
-      this.w / 4,
-      this.h / 7
-    );
-  }
-  // remove brick when colliding with ball
-  collision(coconut) {
-    if (
-      coconut.x + coconut.r > this.x &&
-      coconut.x - coconut.r < this.x + this.w &&
-      coconut.y + coconut.r > this.y &&
-      coconut.y - coconut.r < this.y + this.h
-    ) {
-      coconut.moveY = coconut.moveY * -1;
-    }
-  }
-}
+//     if (this.isSpecial) {
+//       fill(171, 173, 158); //change colour for special bricks
+//     } else {
+//       fill(108, 110, 94);
+//     }
+//     rect(this.x, this.y, this.w, this.h, this.r);
+//     fill(133, 135, 116);
+//     rect(this.x + this.h / 4, this.y + this.r, this.w / 3, this.h / 4);
+//     rect(this.x + this.h * 1, this.y + this.r * 3.4, this.w / 3, this.h / 6);
+//     rect(
+//       this.x + this.h + this.r / 4,
+//       this.y + this.r / 3,
+//       this.w / 4,
+//       this.h / 7
+//     );
+//   }
+//   // remove brick when colliding with ball
+//   collision(coconut) {
+//     if (
+//       coconut.x + coconut.r > this.x &&
+//       coconut.x - coconut.r < this.x + this.w &&
+//       coconut.y + coconut.r > this.y &&
+//       coconut.y - coconut.r < this.y + this.h
+//     ) {
+//       coconut.moveY = coconut.moveY * -1;
+//     }
+//   }
+// }
 
 // brick grid
 for (let r = 0; r < rows; r++) {
@@ -978,17 +978,17 @@ for (let r = 0; r < rows; r++) {
     let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
     let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
     let isSpecial = Math.random() < 0.08; // 8% chance of being special
-    bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 15, isSpecial));
+    bricks.push(new SpaceBrick(x, y, brickWidth, brickHeight, 15, isSpecial));
   }
 }
 
 // call classes
-pearl = new pearlBall(400, 500, 20);
-shell = new shellPaddle(canvasWidth / 2);
-coconut = new jungleBall(400, 500, 20);
-bamboo = new junglePaddle(canvasWidth / 2);
-comet = new cometBall(400, 500, 20);
-saucer = new spacePaddle(canvasWidth / 2);
+pearl = new PearlBall(400, 500, 20);
+shell = new ShellPaddle(canvasWidth / 2);
+coconut = new JungleBall(400, 500, 20);
+bamboo = new JunglePaddle(canvasWidth / 2);
+comet = new CometBall(400, 500, 20);
+saucer = new SpacePaddle(canvasWidth / 2);
 
 //Check if game is lost or won
 function checkGameStatus() {
@@ -1522,7 +1522,7 @@ function resetGame() {
       let x = c * (brickWidth + spaceX) + offsetX; // space and offset x
       let y = r * (brickHeight + spaceY) + offsetY; // space and offset y
       let isSpecial = Math.random() < 0.08; // 8% chance of being special
-      bricks.push(new spaceBrick(x, y, brickWidth, brickHeight, 15, isSpecial));
+      bricks.push(new SpaceBrick(x, y, brickWidth, brickHeight, 15, isSpecial));
     }
   }
 }
