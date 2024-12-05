@@ -1,7 +1,13 @@
 function setup() {
-  createCanvas(800, 600);
+  createCanvas(canvasWidth, canvasHeight);
+
+  c1 = color(129, 210, 227);
+  c2 = color(71, 116, 125);
+  c1Win = color(29, 32, 41);
+  c2Win = color(195, 255, 112);
+  c1Lost = color(29, 32, 41);
+  c2Lost = color(125, 0, 0);
 }
-window.setup = setup;
 
 // Fish Loop Variables
 let fishX = [160, 180, 200];
@@ -21,6 +27,8 @@ let buttonR = 20;
 let pearl, shell, coconut, bamboo, comet, saucer;
 
 // Game Variables
+let canvasWidth = 800;
+let canvasHeight = 600;
 let gameState = "start";
 let gameWon = false;
 let gameLost = false;
@@ -29,24 +37,13 @@ let lives = 3; // Player's lives
 let gameActive = true; // check if the game is active
 let isBoosting = false; // check if boost is active or not
 
-// Reset Game Function
-function resetGame() {
-  gameWon = false;
-  gameLost = false;
-  score = 0; // Reset score
-  lives = 3; // Reset lives to initial state
-  gameActive = true; // Mark the game as active
-  isBoosting = false; // Reset boost status
-  // Reset any additional variables if necessary, e.g., position, enemies, etc.
-}
-
 //Gradient Colours
-let c1 = color(129, 210, 227);
-let c2 = color(71, 116, 125);
-let c1Win = color(29, 32, 41);
-let c2Win = color(195, 255, 112);
-let c1Lost = color(29, 32, 41);
-let c2Lost = color(125, 0, 0);
+let c1;
+let c2;
+let c1Win;
+let c2Win;
+let c1Lost;
+let c2Lost;
 
 // Brick Variables
 let bricks = [];
@@ -66,8 +63,8 @@ let starY = [];
 let starAlpha = [];
 
 for (let i = 0; i < 300; i++) {
-  const x = Math.floor(Math.random() * width);
-  const y = Math.floor(Math.random() * height);
+  const x = Math.floor(Math.random() * canvasWidth);
+  const y = Math.floor(Math.random() * canvasHeight);
   const alpha = Math.random();
 
   starX.push(x);
@@ -285,14 +282,18 @@ function drawStartScreen() {
   push();
   textSize(40);
   textFont("Bungee Tint Regular");
-  text("BREAKOUT GAME", width / 2 - 190, height / 2 - 80);
+  text("BREAKOUT GAME", canvasWidth / 2 - 190, canvasHeight / 2 - 80);
   stroke(20);
   pop();
 
   textSize(20);
   textFont("Audiowide Regular");
   fill(255, 255, 255);
-  text("Press the i Key to Read Instructions", width / 2 - 150, height / 1.8);
+  text(
+    "Press the i Key to Read Instructions",
+    canvasWidth / 2 - 150,
+    canvasHeight / 1.8
+  );
 }
 
 // INSTRUCTIONS
@@ -310,14 +311,21 @@ function drawInstructions() {
   textSize(22);
   fill(80, 94, 85);
 
+  //key square
+  push();
+  fill(240, 245, 242);
+  rect(480, 250, 200, 125, 20);
+
+  pop();
+
   //subheadings
   text("1. Start the Game", 50, 70);
   text("2. Control the Paddle", 50, 140);
   text("3. Destroy the Bricks", 50, 210);
   text("4. Avoid Losing the Ball", 50, 280);
   text("5. Boost", 50, 350);
-  text("6. Score", 50, 420);
-  text("KEYS", 550, 330);
+  text("6. Score", 50, 440);
+  text("KEYS", 550, 280);
 
   //instructions
   textSize(18);
@@ -343,13 +351,18 @@ function drawInstructions() {
 
   text("Hold down the B key to increase ball speed.", 70, 370);
   text("Hit the special bricks to increase paddle size.", 70, 390);
+  text(
+    "Beware! The paddle might change direction when you least notice...",
+    70,
+    410
+  );
 
-  text("Hitting the regular bricks gives you 5 points.", 70, 440);
-  text("Hitting the special bricks gives you 10 points.", 70, 460);
+  text("Hitting the regular bricks gives you 5 points.", 70, 460);
+  text("Hitting the special bricks gives you 10 points.", 70, 480);
 
-  text("press o for ocean level", 490, 355);
-  text("press j for jungle level", 490, 380);
-  text("press s for space level", 490, 405);
+  text("press o for ocean level", 490, 305);
+  text("press j for jungle level", 490, 330);
+  text("press s for space level", 490, 355);
 
   //home button
 
@@ -438,7 +451,7 @@ class pearlBall {
   // check canvas boundaries
   checkPearlBoundaries() {
     // Left or right boundary
-    if (this.x - this.r <= 0 || this.x + this.r >= width) {
+    if (this.x - this.r <= 0 || this.x + this.r >= canvasWidth) {
       this.moveX *= -1;
     }
 
@@ -448,17 +461,16 @@ class pearlBall {
     }
 
     // Bottom boundary: Lose life
-    if (this.y - this.r > height) {
+    if (this.y - this.r > canvasHeight) {
       lives--;
       if (lives > 0) {
         // Reset pearl position
-        this.x = width / 2;
-        this.y = height - 100;
+        this.x = canvasWidth / 2;
+        this.y = canvasHeight - 100;
         this.moveX = 2;
         this.moveY = -4;
       } else {
         gameActive = false; // End game
-        noLoop();
       }
     }
   }
@@ -490,7 +502,7 @@ class cometBall {
   // check canvas boundaries
   checkCometBoundaries() {
     // Left or right boundary
-    if (this.x - this.r <= 0 || this.x + this.r >= width) {
+    if (this.x - this.r <= 0 || this.x + this.r >= canvasWidth) {
       this.moveX *= -1;
     }
 
@@ -500,17 +512,16 @@ class cometBall {
     }
 
     // Bottom boundary: Lose life
-    if (this.y - this.r > height) {
+    if (this.y - this.r > canvasHeight) {
       lives--;
       if (lives > 0) {
         // Reset coconut position
-        this.x = width / 2;
-        this.y = height - 100;
+        this.x = canvasWidth / 2;
+        this.y = canvasHeight - 100;
         this.moveX = 2;
         this.moveY = -4;
       } else {
         gameActive = false; // End game
-        noLoop();
       }
     }
   }
@@ -544,7 +555,7 @@ class jungleBall {
 
   checkCoconutBoundaries() {
     // Left or right boundary
-    if (this.x - this.r <= 0 || this.x + this.r >= width) {
+    if (this.x - this.r <= 0 || this.x + this.r >= canvasWidth) {
       this.moveX *= -1;
     }
 
@@ -554,17 +565,16 @@ class jungleBall {
     }
 
     // Bottom boundary: Lose life
-    if (this.y - this.r > height) {
+    if (this.y - this.r > canvasHeight) {
       lives--;
       if (lives > 0) {
         // Reset coconut position
-        this.x = width / 2;
-        this.y = height - 100;
+        this.x = canvasWidth / 2;
+        this.y = canvasHeight - 100;
         this.moveX = 2;
         this.moveY = -4;
       } else {
         gameActive = false; // End game
-        noLoop();
       }
     }
   }
@@ -574,27 +584,26 @@ class jungleBall {
 class shellPaddle {
   constructor(x) {
     this.x = x;
-    this.y = height - 40;
+    this.y = canvasHeight - 40;
     this.w = 120;
     this.h = 20;
     this.originalW = this.w;
-    this.timer = 0; 
+    this.timer = 0;
 
-     // Movement mode properties
-     this.oppositeMovement = false; 
-     this.lastMouseX = mouseX; 
- 
-     // Timer properties
-     this.switchInterval = 500; // around 10 seconds 
+    // Movement mode properties
+    this.oppositeMovement = false;
+    this.lastMouseX = 0;
+
+    // Timer properties
+    this.switchInterval = 500; // around 10 seconds
   }
 
   drawShellPaddle() {
-
     // Switch movement mode every 10 seconds, gron chatgpt lines 583-601 https://chatgpt.com/share/6750afc6-c27c-8005-9683-7081d310cac0
     if (frameCount % this.switchInterval === 0) {
       this.oppositeMovement = !this.oppositeMovement;
     }
-  
+
     // Movement logic
     if (this.oppositeMovement) {
       // Calculate opposite direction movement
@@ -604,12 +613,12 @@ class shellPaddle {
       // Follow the mouse normally
       this.x = mouseX;
     }
-  
+
     // Update last known mouse position
     this.lastMouseX = mouseX;
-  
+
     // Keep paddle within bounds
-    this.x = constrain(this.x, this.w / 2, width - this.w / 2);
+    this.x = constrain(this.x, this.w / 2, canvasWidth - this.w / 2);
     // clam shell
     stroke(137, 94, 166);
     strokeWeight(2.5);
@@ -641,7 +650,8 @@ class shellPaddle {
       shell.moveY = shell.moveY * -1;
     }
   }
-  triggerRandomMovement() { //from chatgpt 633-639 https://chatgpt.com/share/6750afc6-c27c-8005-9683-7081d310cac0
+  triggerRandomMovement() {
+    //from chatgpt 633-639 https://chatgpt.com/share/6750afc6-c27c-8005-9683-7081d310cac0
     this.randomMovement = true;
     this.randomTimer = this.randomDuration;
     this.randomDirection = createVector(
@@ -653,41 +663,41 @@ class shellPaddle {
 class junglePaddle {
   constructor(x) {
     this.x = x;
-    this.y = height - 70;
+    this.y = canvasHeight - 70;
     this.w = 120;
     this.h = 20;
     this.originalW = this.w; //store original width
     this.timer = 0; //timer to track size duration
 
-     // Movement mode properties
-     this.oppositeMovement = false; // flag for opposite movement
-     this.lastMouseX = mouseX; // track last mouse position
- 
-     // Timer properties
-     this.switchInterval = 500; // 10 seconds in frames 
+    // Movement mode properties
+    this.oppositeMovement = false; // flag for opposite movement
+    this.lastMouseX = 0; // track last mouse position
+
+    // Timer properties
+    this.switchInterval = 500; // 10 seconds in frames
   }
 
   drawJunglePaddle() {
-       // Switch movement mode every 10 seconds // from chatgpt lines 661-671 https://chatgpt.com/share/6750afc6-c27c-8005-9683-7081d310cac0
-   if (frameCount % this.switchInterval === 0) {
-    this.oppositeMovement = !this.oppositeMovement;
-  }
+    // Switch movement mode every 10 seconds // from chatgpt lines 661-671 https://chatgpt.com/share/6750afc6-c27c-8005-9683-7081d310cac0
+    if (frameCount % this.switchInterval === 0) {
+      this.oppositeMovement = !this.oppositeMovement;
+    }
 
-  // Movement logic
-  if (this.oppositeMovement) {
-    // Calculate opposite direction movement
-    let mouseDelta = mouseX - this.lastMouseX;
-    this.x -= mouseDelta;
-  } else {
-    // Follow the mouse normally
-    this.x = mouseX;
-  }
+    // Movement logic
+    if (this.oppositeMovement) {
+      // Calculate opposite direction movement
+      let mouseDelta = mouseX - this.lastMouseX;
+      this.x -= mouseDelta;
+    } else {
+      // Follow the mouse normally
+      this.x = mouseX;
+    }
 
-  // Update last known mouse position
-  this.lastMouseX = mouseX;
+    // Update last known mouse position
+    this.lastMouseX = mouseX;
 
-  // Keep paddle within bounds
-  this.x = constrain(this.x, this.w / 2, width - this.w / 2);
+    // Keep paddle within bounds
+    this.x = constrain(this.x, this.w / 2, canvasWidth - this.w / 2);
 
     // paddle
     fill(230, 216, 62);
@@ -733,45 +743,42 @@ class junglePaddle {
 class spacePaddle {
   constructor(x) {
     this.x = x;
-    this.y = height - 40;
+    this.y = canvasHeight - 40;
     this.w = 120;
     this.h = 20;
     this.originalW = this.w; //store original width
     this.timer = 0; //timer to track size duration
 
-     // Movement mode properties
-     this.oppositeMovement = false; // flag for opposite movement
-     this.lastMouseX = mouseX; // track last mouse position
- 
-     // Timer properties
-     this.switchInterval = 500; 
+    // Movement mode properties
+    this.oppositeMovement = false; // flag for opposite movement
+    this.lastMouseX = 0; // track last mouse position
+
+    // Timer properties
+    this.switchInterval = 500;
   }
 
   drawSpacePaddle() {
+    // Switch movement mode every 10 seconds
+    if (frameCount % this.switchInterval === 0) {
+      this.oppositeMovement = !this.oppositeMovement;
+    }
 
-   // Switch movement mode every 10 seconds
-   if (frameCount % this.switchInterval === 0) {
-    this.oppositeMovement = !this.oppositeMovement;
-  }
+    // Movement logic
+    if (this.oppositeMovement) {
+      // Calculate opposite direction movement
+      let mouseDelta = mouseX - this.lastMouseX;
+      this.x -= mouseDelta;
+    } else {
+      // Follow the mouse normally
+      this.x = mouseX;
+    }
 
-  // Movement logic
-  if (this.oppositeMovement) {
-    // Calculate opposite direction movement
-    let mouseDelta = mouseX - this.lastMouseX;
-    this.x -= mouseDelta;
-  } else {
-    // Follow the mouse normally
-    this.x = mouseX;
-  }
+    // Update last known mouse position
+    this.lastMouseX = mouseX;
 
-  // Update last known mouse position
-  this.lastMouseX = mouseX;
+    // Keep paddle within bounds
+    this.x = constrain(this.x, this.w / 2, canvasWidth - this.w / 2);
 
-  // Keep paddle within bounds
-  this.x = constrain(this.x, this.w / 2, width - this.w / 2);
-   
-    
-    
     noStroke();
 
     // flying saucer
@@ -962,11 +969,11 @@ for (let r = 0; r < rows; r++) {
 
 // call classes
 pearl = new pearlBall(400, 500, 20);
-shell = new shellPaddle(width / 2);
+shell = new shellPaddle(canvasWidth / 2);
 coconut = new jungleBall(400, 500, 20);
-bamboo = new junglePaddle(width / 2);
+bamboo = new junglePaddle(canvasWidth / 2);
 comet = new cometBall(400, 500, 20);
-saucer = new spacePaddle(width / 2);
+saucer = new spacePaddle(canvasWidth / 2);
 
 //Check if game is lost or won
 function checkGameStatus() {
@@ -988,11 +995,11 @@ function checkGameStatus() {
 // Underwater Scenery
 function oceanScenery() {
   // gradient adapted from https://editor.p5js.org/J_Silva/sketches/mJslozHWg
-  for (let y = 0; y < height; y++) {
-    n = map(y, 0, height, 0, 1);
+  for (let y = 0; y < canvasHeight; y++) {
+    n = map(y, 0, canvasHeight, 0, 1);
     let newc = lerpColor(c1, c2, n);
     stroke(newc);
-    line(0, y, width, y);
+    line(0, y, canvasWidth, y);
   }
 
   // fish loop
@@ -1000,7 +1007,7 @@ function oceanScenery() {
     fishX[i] = fishX[i] + fishSpeed[i];
 
     if (fishX[i] < -100) {
-      fishX[i] = width + 50;
+      fishX[i] = canvasWidth + 50;
     }
 
     // draw fish
@@ -1419,11 +1426,11 @@ function drawSpaceLevel() {
 //WIN SCREEN
 function drawWinScreen() {
   // gradient adapted from https://editor.p5js.org/J_Silva/sketches/mJslozHWg
-  for (let y = 1; y < height; y++) {
-    n = map(y, 0, height, 0, 0.4);
+  for (let y = 1; y < canvasHeight; y++) {
+    n = map(y, 0, canvasHeight, 0, 0.4);
     let newc = lerpColor(c1Win, c2Win, n);
     stroke(newc);
-    line(0, y, width, y);
+    line(0, y, canvasWidth, y);
   }
 
   // code from Garritt's video example
@@ -1439,25 +1446,31 @@ function drawWinScreen() {
   textSize(40);
   fill(66, 148, 52);
   textFont("Lilita One");
-  text("YOU WIN! CONGRATULATIONS!", width / 2 - 255, height / 2 - 80);
+  text(
+    "YOU WIN! CONGRATULATIONS!",
+    canvasWidth / 2 - 255,
+    canvasHeight / 2 - 80
+  );
   stroke(20);
   pop();
 
   textSize(20);
   textFont("Audiowide Regular");
   fill(255, 255, 255);
-  text("Press Enter Key to Restart", width / 2 - 118, height / 1.8);
+  text("Press Enter Key to Restart", canvasWidth / 2 - 118, canvasHeight / 1.8);
   textSize(15);
+
+  gameWon = true;
 }
 
 //LOST SCREEN
 function drawLostScreen() {
   // gradient adapted from https://editor.p5js.org/J_Silva/sketches/mJslozHWg
-  for (let y = 1; y < height; y++) {
-    n = map(y, 0, height, 0, 0.4);
+  for (let y = 1; y < canvasHeight; y++) {
+    n = map(y, 0, canvasHeight, 0, 0.4);
     let newc = lerpColor(c1Lost, c2Lost, n);
     stroke(newc);
-    line(0, y, width, y);
+    line(0, y, canvasWidth, y);
   }
 
   // code from Garritt's video example
@@ -1473,15 +1486,17 @@ function drawLostScreen() {
   textSize(40);
   fill(255, 34, 0);
   textFont("Lilita One");
-  text("YOU LOSE! TRY AGAIN", width / 2 - 180, height / 2 - 80);
+  text("YOU LOSE! TRY AGAIN", canvasWidth / 2 - 180, canvasHeight / 2 - 80);
   stroke(20);
   pop();
 
   textSize(20);
   textFont("Audiowide Regular");
   fill(255, 255, 255);
-  text("Press Enter Key to Restart", width / 2 - 118, height / 1.8);
+  text("Press Enter Key to Restart", canvasWidth / 2 - 118, canvasHeight / 1.8);
   textSize(15);
+
+  gameLost = true;
 }
 
 // DRAW FUNCTION
@@ -1503,7 +1518,7 @@ function draw() {
     drawLostScreen();
   }
 }
-window.draw = draw;
+// window.draw = draw;
 
 // KEY AND MOUSE FUNCTIONS
 
@@ -1522,7 +1537,10 @@ function keyPressed() {
     gameState = "space";
   }
 
-  //add keys to reset game / go back to home screen
+  if ((gameState === "win" || gameState === "lost") && key === "Enter") {
+    resetGame();
+    gameState = "start";
+  }
 }
 
 function mousePressed() {
