@@ -1499,7 +1499,25 @@ function drawLostScreen() {
   gameLost = true;
 }
 
-// DRAW FUNCTION
+//reset game
+function resetGame() {
+  gameState = "start";
+  gameWon = false;
+  gameLost = false;
+  score = 0; // Reset score
+  lives = 3; // Reset lives to initial state
+  gameActive = true; // Mark the game as active
+  isBoosting = false; // Reset boost status
+
+  this.x = width / 2; //ball position
+  this.y = height - 100;
+  this.moveX = 2;
+  this.moveY = -4;
+  gameWon = false;
+  gameLost = false;
+}
+
+// DRAW FUNCTION LOOP
 
 function draw() {
   if (gameState === "start") {
